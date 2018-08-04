@@ -298,6 +298,7 @@ static void KeyboardCommands() {
 
 	// L (SDLK_TAB), Start+Select or Power flick (SDLK_HOME) - enter GUI
 	if (_keyonly(DINGOO_L)
+	 || _keyonly(DINGOO_MENU)
 	 || MenuRequested
 	 || (ispressed(DINGOO_START) && ispressed(DINGOO_SELECT))) {
 		SilenceSound(1);
@@ -726,8 +727,11 @@ static void UpdateGamepad(void) {
 	uint32 JS = 0;
 	int x;
 	int wg;
+	int merge;
 
 	rapid ^= 1;
+
+	g_config->getOption("SDL.MergeControls", &merge);
 
 	// go through just one device for the little dingoo :)
 	for (wg = 0; wg < 1; wg++) {
@@ -735,6 +739,10 @@ static void UpdateGamepad(void) {
 		for (x = 0; x < 8; x++) {
 			if (DTestButton(&GamePadConfig[wg][x])) {
 				JS |= (1 << x) << (wg << 3);
+				// Inject gamepad 1 input into gamepad 2 if enabled
+				if (merge) {
+					JS |= (1 << x) << ((wg + 1) << 3);
+				}
 			}
 		}
 
@@ -743,6 +751,10 @@ static void UpdateGamepad(void) {
 			for (x = 0; x < 2; x++) {
 				if (DTestButton(&GamePadConfig[wg][8 + x])) {
 					JS |= (1 << x) << (wg << 3);
+					// Inject gamepad 1 input into gamepad 2 if enabled
+					if (merge) {
+						JS |= (1 << x) << ((wg + 1) << 3);
+					}
 				}
 			}
 		}
