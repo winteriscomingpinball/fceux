@@ -129,7 +129,7 @@ static Letter g_letters[] =
 	/*VIDEOSETTINGS*/ {132,58,99,12,0,0},
 	/*SOUNDSETTINGS*/ {132,46,103,12,0,0},
 	/*BROWSER*/ {132,82,89,12,0,0},
-	/*PREVIEWBLOCK*/ {1,55,99,105,0,0},
+	/*PREVIEWBLOCK*/ {1,69,99,91,0,0},
 	/*LOGO*/ {119,155,119,18,0,0}
 };
 

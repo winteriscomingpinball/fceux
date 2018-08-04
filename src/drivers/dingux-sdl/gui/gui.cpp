@@ -401,19 +401,6 @@ void FCEUGUI_Run() {
 			DrawChar(gui_screen, SP_SELECTOR, 56, spy);
 			DrawChar(gui_screen, SP_SELECTOR, 77, spy);
 
-			if (index == 3 || index == 4) {
-				// Draw state preview
-				DrawChar(gui_screen, SP_PREVIEWBLOCK, 184, 73);
-				draw_preview((unsigned short *)gui_screen->pixels, 185, 100);
-				if (!g_ispreview)
-					DrawChar(gui_screen, SP_NOPREVIEW, 207, 135);
-			}
-
-			if (index == 5) {
-				DrawChar(gui_screen, SP_PREVIEWBLOCK, 184, 73);
-				draw_shot_preview((unsigned short *)gui_screen->pixels, 185, 100);
-			}
-
 			DrawText(gui_screen, "Now Playing:", 8, 37);
 			DrawText(gui_screen, g_romname, 96, 37);
 
@@ -425,21 +412,24 @@ void FCEUGUI_Run() {
 			// Draw info
 			DrawText(gui_screen, main_menu[index].info, 8, 225);
 
-			// If save/load state render slot preview and number
-			if (index == 3 || index == 4) {
-				char tmp[32];
-				sprintf(tmp, "Slot %d", g_slot);
-				DrawText(gui_screen, tmp, 212, 80);
+			if (index == 0 || index == 1 || index == 2) {
+				// Draw state preview
+				DrawChar(gui_screen, SP_PREVIEWBLOCK, 184, spy);
 
-				if (g_slot > 0)
-					DrawChar(gui_screen, SP_LEFTARROW, 197, 83);
-				if (g_slot < 9)
-					DrawChar(gui_screen, SP_RIGHTARROW, 259, 83);
-			}
+				if (index == 2) { // screenshot
+					draw_shot_preview((unsigned short *)gui_screen->pixels, 185, spy+13);
+					DrawText(gui_screen, "Preview", 207, spy);
+				} else {
+					// If save/load state render slot preview and number
+					char tmp[32];
+					sprintf(tmp, "Slot %d", g_slot);
+					DrawText(gui_screen, tmp, 212, spy);
 
-			// If screenshot render current frame preview
-			if (index == 2) {
-				DrawText(gui_screen, "Preview", 207, 80);
+					if (g_slot > 0) DrawChar(gui_screen, SP_LEFTARROW, 197, spy+3);
+					if (g_slot < 9) DrawChar(gui_screen, SP_RIGHTARROW, 259, spy+3);
+					draw_preview((unsigned short *)gui_screen->pixels, 185, spy+13);
+					if (!g_ispreview) DrawChar(gui_screen, SP_NOPREVIEW, 207, spy+48);
+				}
 			}
 
 			g_dirty = 0;
