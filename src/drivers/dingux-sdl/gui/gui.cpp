@@ -267,7 +267,7 @@ static int cmd_exit() {
 /* MAIN MENU */
 
 static MenuEntry main_menu[] = { 
-		{ "Load ROM", "Load new rom or movie", load_rom },
+		// { "Load ROM", "Load new rom or movie", load_rom },
 		{ "Reset", "Reset NES", reset_nes },
 		{ "Flip disc", "Switch side or disc (FDS)", flip_disc },
 		{ "Save state", "Save current state", save_state },
@@ -276,6 +276,8 @@ static MenuEntry main_menu[] = {
 		{ "Settings", "Change current settings", cmd_settings_menu },
 		{ "Exit", "Exit emulator", cmd_exit } 
 };
+int main_menu_items = 6;
+
 
 extern char FileBase[2048];
 
@@ -344,13 +346,13 @@ void FCEUGUI_Run() {
 				index--;
 				spy -= 16;
 			} else {
-				index = 7;
+				index = main_menu_items;
 				spy = 72 + 16*index;
 			}
 		}
 
 		if (parsekey(DINGOO_DOWN, 0)) {
-			if (index < 7) {
+			if (index < main_menu_items) {
 				index++;
 				spy += 16;
 			} else {
@@ -416,7 +418,7 @@ void FCEUGUI_Run() {
 			DrawText(gui_screen, g_romname, 96, 37);
 
 			// Draw menu
-			for (i = 0, y = 72; i < 8; i++, y += 16) {
+			for (i = 0, y = 72; i <= main_menu_items; i++, y += 16) {
 				DrawText(gui_screen, main_menu[i].name, 60, y);
 			}
 
