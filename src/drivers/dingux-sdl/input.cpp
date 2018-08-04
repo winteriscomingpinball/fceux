@@ -297,10 +297,10 @@ static void KeyboardCommands() {
 	}
 
 	// L (SDLK_TAB), Start+Select or Power flick (SDLK_HOME) - enter GUI
-	if (_keyonly(DINGOO_L)
-	 || _keyonly(DINGOO_MENU)
+	if (_keyonly(DINGOO_MENU)
 	 || MenuRequested
-	 || (ispressed(DINGOO_START) && ispressed(DINGOO_SELECT))) {
+	 /*|| (ispressed(DINGOO_START) && ispressed(DINGOO_SELECT))*/
+	 ) {
 		SilenceSound(1);
 		MenuRequested = false;
 		FCEUGUI_Run();
