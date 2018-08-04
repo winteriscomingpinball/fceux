@@ -206,20 +206,13 @@ int RunControlSettings()
 					g_config->getOption("SDL.MergeControls", &mergeValue);
 					sprintf(cBtn, "%s", mergeValue ? "on" : "off");
 				}
-				else if (iBtnVal == DefaultGamePad[0][0])
-					sprintf(cBtn, "%s", "GCW_A");
-				else if (iBtnVal == DefaultGamePad[0][1])
-					sprintf(cBtn, "%s", "GCW_B");
-				else if (iBtnVal == DefaultGamePad[0][8])
-					sprintf(cBtn, "%s", "GCW_Y");
-				else if (iBtnVal == DefaultGamePad[0][9])
-					sprintf(cBtn, "%s", "GCW_X");
-				else
-					sprintf(cBtn, "%s", "<empty>");
-
+				else if (iBtnVal == DefaultGamePad[0][0]) sprintf(cBtn, "%s", "GCW_A");
+				else if (iBtnVal == DefaultGamePad[0][1]) sprintf(cBtn, "%s", "GCW_B");
+				else if (iBtnVal == DefaultGamePad[0][8]) sprintf(cBtn, "%s", "GCW_X");
+				else if (iBtnVal == DefaultGamePad[0][9]) sprintf(cBtn, "%s", "GCW_Y");
+				else sprintf(cBtn, "%s", "<empty>");
 
 				DrawText(gui_screen, cBtn, 210, y);
-				
 			}
 
 			// Draw info
