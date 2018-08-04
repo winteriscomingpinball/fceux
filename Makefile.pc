@@ -236,16 +236,16 @@ LDFLAGS  += -static-libgcc -static-libstdc++
 endif
 LIBS = -L$(LIBDIR) `sdl-config --libs` -lz -lm -s -Wl,--as-needed -Wl,--gc-sections -flto -s
 
-TARGET = fceux
+TARGET = fceux.dge
 
 all: $(TARGET)
 
 $(TARGET): $(OBJS)
-	@mkdir -p bin/
-	@cp src/drivers/dingux-sdl/gui/*.bmp bin/
+	@mkdir -p fceux/
+	@cp src/drivers/dingux-sdl/gui/*.bmp fceux/
 	@echo Linking $@...
-	@echo $(LD) $(LDFLAGS) $(OBJS) -o bin/$@
-	$(LD) $(LDFLAGS) $(OBJS) $(LIBS) -o bin/$@
+	@echo $(LD) $(LDFLAGS) $(OBJS) -o fceux/$@
+	$(LD) $(LDFLAGS) $(OBJS) $(LIBS) -o fceux/$@
 
 %.o: %.c
 	@echo Compiling $<...
@@ -264,4 +264,4 @@ $(TARGET): $(OBJS)
 	$(CXX) $(CDEFS) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJS) bin/$(TARGET)
+	rm -f $(OBJS) fceux/$(TARGET)
