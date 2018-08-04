@@ -2,4 +2,4 @@
 *.dge
 *.bat
 *.opk
-bin/*
+fceux/fceux.dge

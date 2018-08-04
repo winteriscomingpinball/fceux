@@ -42,7 +42,7 @@ int LoadCPalette(const std::string &file) {
 		printf(" Error reading custom palette from file: %s\n", file.c_str());
 		return 0;
 	}
-	FCEUI_SetPaletteArray(tmpp);
+	FCEUI_SetUserPalette(tmpp, 192);
 	fclose(fp);
 	return 1;
 }
@@ -188,6 +188,7 @@ Config * InitConfig() {
 	config->addOption("input2", "SDL.Input.1", "GamePad.1");
 	config->addOption("input3", "SDL.Input.2", "Gamepad.2");
 	config->addOption("input4", "SDL.Input.3", "Gamepad.3");
+	config->addOption("mergecontrols", "SDL.MergeControls", 0);
 
 	// allow for input configuration
 	// NOT SUPPORTED

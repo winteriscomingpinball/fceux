@@ -31,6 +31,48 @@ extern uint32 palettetranslate[65536 * 4];
 	palette is taken from palettetranslate[]
 	no pitch corrections are made!
 */
+void upscale_320x448(uint32 *dst, uint8 *src)
+{
+	int midh = 448 >> 1;
+	int Eh = 0;
+	int source = 0;
+	int dh = 0;
+	int y, x;
+
+	for (y = 0; y < 448; y++)
+	{
+		source = dh * 256;
+
+		for (x = 0; x < 320/10; x++)
+		{
+			register uint32 ab, cd, ef, gh;
+
+			__builtin_prefetch(dst + 4, 1);
+			__builtin_prefetch(src + source + 4, 0);
+
+			ab = palettetranslate[*(uint16 *)(src + source)] & 0xF7DEF7DE;
+			cd = palettetranslate[*(uint16 *)(src + source + 2)] & 0xF7DEF7DE;
+			ef = palettetranslate[*(uint16 *)(src + source + 4)] & 0xF7DEF7DE;
+			gh = palettetranslate[*(uint16 *)(src + source + 6)] & 0xF7DEF7DE;
+
+			*dst++ = ab;
+			*dst++  = ((ab >> 17) + ((cd & 0xFFFF) >> 1)) + (cd << 16);
+			*dst++  = (cd >> 16) + (ef << 16);
+			*dst++  = (ef >> 16) + (((ef & 0xFFFF0000) >> 1) + ((gh & 0xFFFF) << 15));
+			*dst++  = gh;
+
+			source += 8;
+
+		}
+		Eh += 224; 
+		if(Eh >= 448) 
+		{ 
+			Eh -= 448;
+			dh++; 
+		}
+	}
+}
+
 
 void upscale_320x240(uint32 *dst, uint8 *src)
 {
