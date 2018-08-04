@@ -1194,8 +1194,6 @@ FCEUXCart* cart = 0;
 //	return 0xFF;
 //}
 
-
-
 class NROM : FCEUXCart {
 public:
 virtual void Power() {

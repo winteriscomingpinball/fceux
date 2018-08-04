@@ -37,22 +37,11 @@ static int counter = 0;
 
 void FCEUGUI_Flip()
 {
-#if 0
-	SDL_Rect dstrect;
-
-	dstrect.x = (screen->w - 320) / 2;
-	dstrect.y = (screen->h - 240) / 2;
-
-	SDL_BlitSurface(gui_screen, 0, screen, &dstrect);
+	SDL_SoftStretch(gui_screen, NULL, screen, NULL);
 	SDL_Flip(screen);
-#else
-  // fix for retrogame
-  SDL_SoftStretch(gui_screen, NULL, screen, NULL);
-	SDL_Flip(screen);
-#endif
 }
 
-void readkey() 
+void readkey()
 {
 	SDL_Event event;
 
@@ -75,7 +64,7 @@ void readkey()
 		counter = 0;
 }
 
-int parsekey(unsigned long code, int repeat = 0) 
+int parsekey(unsigned long code, int repeat = 0)
 {
 	if (g_key == code) {
 		if (g_key != last_key) {
@@ -97,7 +86,7 @@ int parsekey(unsigned long code, int repeat = 0)
 	return 0;
 }
 
-void draw_bg(SDL_Surface *bg) 
+void draw_bg(SDL_Surface *bg)
 {
 	if(bg)
 		SDL_BlitSurface(bg, NULL, gui_screen, NULL);
@@ -268,7 +257,7 @@ static int cmd_exit() {
 
 /* MAIN MENU */
 
-static MenuEntry main_menu[] = { 
+static MenuEntry main_menu[] = {
 		{ "Load state", "Load emulation state", load_state },
 		{ "Save state", "Save current state", save_state },
 		{ "Screenshot", "Save current frame shot", save_screenshot },
@@ -278,7 +267,7 @@ static MenuEntry main_menu[] = {
 		{ "Load ROM", "Load new rom or movie", load_rom },
 #endif
 		{ "Settings", "Change current settings", cmd_settings_menu },
-		{ "Exit", "Exit emulator", cmd_exit } 
+		{ "Exit", "Exit emulator", cmd_exit }
 };
 static int main_menu_items;
 
@@ -291,9 +280,8 @@ static int main_menu_items;
 
 extern char FileBase[2048];
 
-int FCEUGUI_Init(FCEUGI *gi) 
+int FCEUGUI_Init(FCEUGI *gi)
 {
-
 	// create 565 RGB surface
 	gui_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 240, 16, 0xf800, 0x7e0, 0x1f, 0);
 	if(!gui_screen) printf("Error creating surface gui\n");
@@ -349,10 +337,14 @@ void FCEUGUI_Kill() {
 	KillFont();
 }
 
+extern void InitGuiVideo();
+
 void FCEUGUI_Run() {
 	static int index = 0;
 	static int spy = 72;
 	int done = 0, y, i;
+
+    InitGuiVideo();
 
 	load_preview();
 
@@ -411,7 +403,7 @@ void FCEUGUI_Run() {
 		// Draw stuff
 		if (g_dirty) {
 			draw_bg(g_bg);
-			
+
 			//Draw Top and Bottom Bars
 			DrawChar(gui_screen, SP_SELECTOR, 0, 37);
 			DrawChar(gui_screen, SP_SELECTOR, 81, 37);
@@ -419,7 +411,7 @@ void FCEUGUI_Run() {
 			DrawChar(gui_screen, SP_SELECTOR, 81, 225);
 			DrawText(gui_screen, "B - Go Back", 235, 225);
 			DrawChar(gui_screen, SP_LOGO, 12, 9);
-			
+
 			// Draw selector
 			DrawChar(gui_screen, SP_SELECTOR, 56, spy);
 			DrawChar(gui_screen, SP_SELECTOR, 77, spy);
@@ -471,6 +463,10 @@ void FCEUGUI_Run() {
 	}
 
 	g_psdl = FCEUD_GetPaletteArray16();
+
+	// Must update emulation core and drivers
+	UpdateEMUCore(g_config);
+	FCEUD_DriverReset();
 
 	// Clear screen
 	dingoo_clear_video();

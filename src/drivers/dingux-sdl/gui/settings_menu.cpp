@@ -56,7 +56,7 @@ static void gg_update(unsigned long key) {
 // 		{ "Save config as default",	"Override default config", cmd_config_save }
 // 	};
 
-static SettingEntry settings_menu[] = 
+static SettingEntry settings_menu[] =
 {
 	// { "Main Settings", "Change fceux main config", "NULL", cmd_main_settings },
 	{ "Video", "Change video settings", "NULL", cmd_video_settings },
@@ -136,7 +136,7 @@ int RunSettingsMenu() {
 		// Draw stuff
 		if (g_dirty) {
 			draw_bg(g_bg);
-			
+
 			//Draw Top and Bottom Bars
 			DrawChar(gui_screen, SP_SELECTOR, 0, 37);
 			DrawChar(gui_screen, SP_SELECTOR, 81, 37);
@@ -144,7 +144,7 @@ int RunSettingsMenu() {
 			DrawChar(gui_screen, SP_SELECTOR, 81, 225);
 			DrawText(gui_screen, "B - Go Back", 235, 225);
 			DrawChar(gui_screen, SP_LOGO, 12, 9);
-			
+
 			// Draw selector
 			DrawChar(gui_screen, SP_SELECTOR, 56, spy);
 			DrawChar(gui_screen, SP_SELECTOR, 77, spy);
@@ -183,10 +183,6 @@ int RunSettingsMenu() {
 		// Update real screen
 		FCEUGUI_Flip();
 	}
-
-	// Must update emulation core and drivers
-	UpdateEMUCore(g_config);
-	FCEUD_DriverReset();
 
 	// Clear screen
 	dingoo_clear_video();

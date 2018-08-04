@@ -5,12 +5,13 @@ extern Config *g_config;
 /* MENU COMMANDS */
 
 // Fullscreen mode
-/*static char *scale_tag[] = {
+static char *scale_tag[] = {
 		"Original",
+		"Hardware",
 		"Aspect",
 		"FS Fast",
 		"FS Smooth"
-};*/
+};
 
 // Use PAL or NTSC rate
 static void pal_update(unsigned long key) {
@@ -63,9 +64,9 @@ static void custom_update(unsigned long key) {
 	char palname[128] = "";
 
 	#ifdef WIN32
-	if (!RunFileBrowser("d:\\", palname, types, "Choose nes palette (.pal)")) 
+	if (!RunFileBrowser("d:\\", palname, types, "Choose nes palette (.pal)"))
 	#else
-	if (!RunFileBrowser("./palettes", palname, types, "Choose nes palette (.pal)")) 
+	if (!RunFileBrowser("./palettes", palname, types, "Choose nes palette (.pal)"))
 	#endif
 	{
 		return;
@@ -83,9 +84,9 @@ static void fullscreen_update(unsigned long key)
 	int val;
 	g_config->getOption("SDL.Fullscreen", &val);
 
-	if (key == DINGOO_RIGHT) val = val < 3 ? val+1 : 3;
+	if (key == DINGOO_RIGHT) val = val < 4 ? val+1 : 4;
 	if (key == DINGOO_LEFT) val = val > 0 ? val-1 : 0;
-   
+
 	g_config->setOption("SDL.Fullscreen", val);
 }
 
@@ -173,21 +174,16 @@ static void slend_update(unsigned long key)
 }
 
 /* VIDEO SETTINGS MENU */
-static SettingEntry vd_menu[] = 
+static SettingEntry vd_menu[] =
 {
-	{ "Video scaling", "Select video scale mode", "SDL.Fullscreen", fullscreen_update },
-	{ "Show FPS", "Show frames per second", "SDL.ShowFPS", showfps_update },
-	{ "FPS Throttle", "Use FPS throttling", "SDL.FPSThrottle", throttle_update },
-	{ "Clip sides", "Clips left and right columns", "SDL.ClipSides", clip_update },
-	{ "Sprite limit", "Use NES sprite limit", "SDL.DisableSpriteLimit", sprite_limit_update },
-	{ "New PPU", "New PPU emulation engine", "SDL.NewPPU", newppu_update },
-	{ "Scanline start", "The first drawn scanline", "SDL.ScanLineStart", slstart_update },
-	{ "Scanline end", "The last drawn scanline", "SDL.ScanLineEnd", slend_update },
-	{ "PAL timing", "Use PAL timing", "SDL.PAL", pal_update },
-	{ "NTSC Palette", "Emulate NTSC TV's colors", "SDL.NTSCpalette", ntsc_update },
-	{ "Tint", "Sets tint for NTSC color", "SDL.Tint", tint_update },
-	{ "Hue", "Sets hue for NTSC color", "SDL.Hue", hue_update },
-	{ "Custom palette", "Load custom palette", "SDL.Palette", custom_update },
+	{"Video scaling", "Select video scale mode", "SDL.Fullscreen", fullscreen_update},
+	{"Clip sides", "Clips left and right columns", "SDL.ClipSides", clip_update},
+	{"New PPU", "New PPU emulation engine", "SDL.NewPPU", newppu_update},
+	{"NTSC Palette", "Emulate NTSC TV's colors", "SDL.NTSCpalette", ntsc_update},
+	{"Tint", "Sets tint for NTSC color", "SDL.Tint", tint_update},
+	{"Hue", "Sets hue for NTSC color", "SDL.Hue", hue_update},
+	{"Scanline start", "The first drawn scanline", "SDL.ScanLineStart", slstart_update},
+	{"Scanline end", "The last drawn scanline", "SDL.ScanLineEnd", slend_update},
 };
 
 int RunVideoSettings()
@@ -255,12 +251,12 @@ int RunVideoSettings()
 		) {
 			vd_menu[index].update(g_key);
 		}
-  
+
 		// Draw stuff
-		if( g_dirty ) 
+		if( g_dirty )
 		{
 			draw_bg(g_bg);
-			
+
 			//Draw Top and Bottom Bars
 			DrawChar(gui_screen, SP_SELECTOR, 0, 37);
 			DrawChar(gui_screen, SP_SELECTOR, 81, 37);
@@ -268,22 +264,25 @@ int RunVideoSettings()
 			DrawChar(gui_screen, SP_SELECTOR, 81, 225);
 			DrawText(gui_screen, "B - Go Back", 235, 225);
 			DrawChar(gui_screen, SP_LOGO, 12, 9);
-			
+
 			// Draw selector
 			DrawChar(gui_screen, SP_SELECTOR, 56, spy);
 			DrawChar(gui_screen, SP_SELECTOR, 77, spy);
 
-			DrawText(gui_screen, "Video Settings", 8, 37); 
+			DrawText(gui_screen, "Video Settings", 8, 37);
 
 			// Draw menu
 			// for(i=0,y=72;i <= menu_size;i++,y+=15) {
 			for (i = offset_start, y = 72; i < offset_end; i++, y += 15) {
 				DrawText(gui_screen, vd_menu[i].name, 60, y);
-		
+
 				g_config->getOption(vd_menu[i].option, &itmp);
-				/*if (!strncmp(vd_menu[i].name, "Video scaling", 5)) {
+				if (!strncmp(vd_menu[i].name, "Video scaling", 5)) {
 					sprintf(tmp, "%s", scale_tag[itmp]);
 				}
+				else if (!strncmp(vd_menu[i].name, "Clip sides", 10) \
+					|| !strncmp(vd_menu[i].name, "New PPU", 7)   \
+					|| !strncmp(vd_menu[i].name, "NTSC Palette", 12)) {
 					sprintf(tmp, "%s", itmp ? "on" : "off");
 				}
 				else if (
@@ -309,10 +308,10 @@ int RunVideoSettings()
 		}
 
 		SDL_Delay(16);
-		
+
 		// Update real screen
 		FCEUGUI_Flip();
-	}	
+	}
 
 	// Clear screen
 	dingoo_clear_video();
