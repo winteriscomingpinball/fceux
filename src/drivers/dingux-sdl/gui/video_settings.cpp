@@ -5,12 +5,12 @@ extern Config *g_config;
 /* MENU COMMANDS */
 
 // Fullscreen mode
-/*static char *scale_tag[] = {
+static char *scale_tag[] = {
 		"Original",
 		"Aspect",
 		"FS Fast",
 		"FS Smooth"
-};*/
+};
 
 static void fullscreen_update(unsigned long key)
 {
@@ -111,7 +111,7 @@ static void slend_update(unsigned long key)
 
 static SettingEntry vd_menu[] = 
 {
-	/*{"Video scaling", "Select video scale mode", "SDL.Fullscreen", fullscreen_update},*/
+	{"Video scaling", "Select video scale mode", "SDL.Fullscreen", fullscreen_update},
 	{"Clip sides", "Clips left and right columns", "SDL.ClipSides", clip_update},
 	{"New PPU", "New PPU emulation engine", "SDL.NewPPU", newppu_update},
 	{"NTSC Palette", "Emulate NTSC TV's colors", "SDL.NTSCpalette", ntsc_update},
@@ -181,10 +181,10 @@ int RunVideoSettings()
 				DrawText(gui_screen, vd_menu[i].name, 60, y);
 		
 				g_config->getOption(vd_menu[i].option, &itmp);
-				/*if (!strncmp(vd_menu[i].name, "Video scaling", 5)) {
+				if (!strncmp(vd_menu[i].name, "Video scaling", 5)) {
 					sprintf(tmp, "%s", scale_tag[itmp]);
 				}
-				else */if (!strncmp(vd_menu[i].name, "Clip sides", 10) \
+				else if (!strncmp(vd_menu[i].name, "Clip sides", 10) \
 					|| !strncmp(vd_menu[i].name, "New PPU", 7)   \
 					|| !strncmp(vd_menu[i].name, "NTSC Palette", 12)) {
 					sprintf(tmp, "%s", itmp ? "on" : "off");

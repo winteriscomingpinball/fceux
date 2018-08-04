@@ -40,9 +40,9 @@
 #include "../common/configSys.h"
 
 // GLOBALS
+SDL_Surface *RS97screen;
 SDL_Surface *screen;
 SDL_Surface *nes_screen; // 256x224
-SDL_Surface* rgbscreen;
 
 extern Config *g_config;
 
@@ -159,17 +159,26 @@ int InitVideo(FCEUGI *gi) {
 	// initialize dingoo video mode
 	if (!s_VideoModeSet) {
 		uint32 vm = 0; // 0 - 320x240, 1 - 400x240, 2 - 480x272
-		#define NUMOFVIDEOMODES 3
-		struct {
-			uint32 x;
-			uint32 y;
-		} VModes[NUMOFVIDEOMODES] = {
-			{320, 240},
-			{400, 240},
-			{480, 272}
-		};
 
-		screen = SDL_SetVideoMode(320, 480, 16, SDL_HWSURFACE);
+		// #define NUMOFVIDEOMODES 3
+		// struct {
+		// 	uint32 x;
+		// 	uint32 y;
+		// } VModes[NUMOFVIDEOMODES] = {
+		// 	{320, 240},
+		// 	{400, 240},
+		// 	{480, 272}
+		// };
+
+		// for(vm = NUMOFVIDEOMODES-1; vm >= 0; vm--)
+		// {
+		// 	if(SDL_VideoModeOK(VModes[vm].x, VModes[vm].y, 16, SDL_HWSURFACE | DINGOO_MULTIBUF) != 0)
+		// 	{
+		// 		break;
+		// 	}
+		// }
+		RS97screen = SDL_SetVideoMode(320, 480, 16, SDL_HWSURFACE);
+		screen = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 240, 16, 0, 0, 0, 0);
 		s_VideoModeSet = true;
 	}
 
@@ -180,8 +189,6 @@ int InitVideo(FCEUGI *gi) {
 	if(!nes_screen)
 		printf("Error in SDL_CreateRGBSurfaceFrom\n");
 	SDL_SetPalette(nes_screen, SDL_LOGPAL, (SDL_Color *)s_cpsdl, 0, 256);
-	
-	rgbscreen = SDL_CreateRGBSurface(SDL_HWSURFACE, 320, 240, 16, 0,0,0,0);
 
 	SDL_ShowCursor(0);
 
@@ -195,6 +202,7 @@ int InitVideo(FCEUGI *gi) {
  * Toggles the full-screen display.
  */
 void ToggleFS() {
+	dingoo_clear_video();
 }
 
 /* Taken from /src/drivers/common/vidblit.cpp */
@@ -289,12 +297,9 @@ void UnlockConsole() {
 /**
  * Pushes the given buffer of bits to the screen.
  */
- 
- extern void upscale_320x448(uint32 *dst, uint8 *src);
- 
-void BlitScreen(uint8 *XBuf) 
-{
+void BlitScreen(uint8 *XBuf) {
 	int x, x2, y, y2;
+
 	// Taken from fceugc
 	// FDS switch disk requested - need to eject, select, and insert
 	// but not all at once!
@@ -328,23 +333,28 @@ void BlitScreen(uint8 *XBuf)
 
 	register uint8 *pBuf = XBuf;
 
-	/*if(s_fullscreen == 3) { // fullscreen smooth
+	if(s_fullscreen == 3) { // fullscreen smooth
 		if (s_clipSides) {
-			upscale_320x240_bilinearish_clip((uint32 *)rgbscreen->pixels, (uint8 *)XBuf + 256 * 8, 256);
+			upscale_320x240_bilinearish_clip((uint32 *)screen->pixels, (uint8 *)XBuf + 256 * 8, 256);
 		} else {
-			upscale_320x240_bilinearish_noclip((uint32 *)rgbscreen->pixels, (uint8 *)XBuf + 256 * 8, 256);
+			upscale_320x240_bilinearish_noclip((uint32 *)screen->pixels, (uint8 *)XBuf + 256 * 8, 256);
 		}
 	} else if(s_fullscreen == 2) { // fullscreen
 		switch(screen->w) {
-			case 320: upscale_320x240((uint32 *)rgbscreen->pixels, (uint8 *)XBuf + 256 * 8); break;
+			case 480: upscale_480x272((uint32 *)screen->pixels, (uint8 *)XBuf + 256 * 8); break;
+			case 400: upscale_384x240((uint32 *)screen->pixels, (uint8 *)XBuf + 256 * 8); break;
+			case 320: upscale_320x240((uint32 *)screen->pixels, (uint8 *)XBuf + 256 * 8); break;
 		}
 	} else if(s_fullscreen == 1) { // aspect fullscreen
 		switch(screen->w) {
+			case 480: upscale_384x272((uint32 *)screen->pixels, (uint8 *)XBuf + 256 * 8); break;
+			case 400:
 			case 320:
 				pBuf += (s_srendline * 256) + 8;
-				register uint16 *dest = (uint16 *) rgbscreen->pixels;
-				dest += (screen->w * s_srendline) + (rgbscreen->w - 280) / 2 + ((rgbscreen->h - 240) / 2) * rgbscreen->w;
-				//dest += (screen->w * s_srendline) + (screen->w - 280) / 2 + ((screen->h - 240) / 2) * screen->w;
+				register uint16 *dest = (uint16 *) screen->pixels;
+				//dest += (320 * s_srendline) + 20;
+				dest += (screen->w * s_srendline) + (screen->w - 280) / 2 + ((screen->h - 240) / 2) * screen->w;
+
 				// semi fullscreen no blur
 				for (y = s_tlines; y; y--) {
 					for (x = 240; x; x -= 6) {
@@ -359,45 +369,51 @@ void BlitScreen(uint8 *XBuf)
 						pBuf += 6;
 					}
 					pBuf += 16;
-					dest += 40;
+					//dest += 40;
+					dest += screen->w - 280;
 				}
-    }
-	} else 
-	{ // native res
-		int32 pinc = (rgbscreen->w - NWIDTH) >> 1;
-		register uint32 *dest = (uint32 *) rgbscreen->pixels;
+		}
+	} else { // native res
+		//int pinc = (320 - NWIDTH) >> 1;
+		int32 pinc = (screen->w - NWIDTH) >> 1;
+
+		//SDL_Rect dstrect;
+
+		// center windows
+		//dstrect.x = (screen->w - 256) / 2;
+		//dstrect.y = (screen->h - 224) / 2;
+
+		// doesn't work in rzx-50 dingux
+		//SDL_BlitSurface(nes_screen, 0, screen, &dstrect);
+
+		register uint32 *dest = (uint32 *) screen->pixels;
+
+
+
 
 		// XXX soules - not entirely sure why this is being done yet
 		pBuf += (s_srendline * 256) + NOFFSET;
-		dest += (rgbscreen->w/2 * s_srendline) + pinc / 2 + ((rgbscreen->h - 240) / 4) * rgbscreen->w;
+		//dest += (s_srendline * 320) + pinc >> 1;
+		dest += (screen->w/2 * s_srendline) + pinc / 2 + ((screen->h - 240) / 4) * screen->w;
 
-		for (y = s_tlines; y; y--, pBuf += 256 - NWIDTH) 
-		{
-		  for (x = NWIDTH >> 3; x; x--) {
-			__builtin_prefetch(dest + 4, 1); 
-			*(dest + 160) = palettetranslate[*(uint16 *) pBuf];
-			*dest++ = palettetranslate[*(uint16 *) pBuf];
-			*(dest + 160) = palettetranslate[*(uint16 *) (pBuf + 2)];
-			*dest++ = palettetranslate[*(uint16 *) (pBuf + 2)];
-			*(dest + 160) = palettetranslate[*(uint16 *) (pBuf + 4)];
-			*dest++ = palettetranslate[*(uint16 *) (pBuf + 4)];
-			*(dest + 160) = palettetranslate[*(uint16 *) (pBuf + 6)];
-			*dest++ = palettetranslate[*(uint16 *) (pBuf + 6)];
-			pBuf += 8;
-		  }   
-		  dest += pinc;
-		  //TonyJih@CTC for RS97 screen
-		  //dest += 160;
-		} 
-	}*/
-	upscale_320x448((uint32 *)screen->pixels + 3840, (uint8 *)XBuf + 256 * 8);
-	
-	/*for (uint8_t y = 0; y < 239; y++, s += 160, d += 320) // double-line fix by pingflood, 2018
-        memmove((uint32_t*)d, (uint32_t*)s, 1280);*/
-	//SDL_BlitSurface(rgbscreen, NULL, screen, NULL);
+		for (y = s_tlines; y; y--, pBuf += 256 - NWIDTH) {
+			for (x = NWIDTH >> 3; x; x--) {
+				__builtin_prefetch(dest + 4, 1);
+				*dest++ = palettetranslate[*(uint16 *) pBuf];
+				*dest++ = palettetranslate[*(uint16 *) (pBuf + 2)];
+				*dest++ = palettetranslate[*(uint16 *) (pBuf + 4)];
+				*dest++ = palettetranslate[*(uint16 *) (pBuf + 6)];
+				pBuf += 8;
+			}
+			dest += pinc;
+		}
+	}
 
-	if (SDL_MUSTLOCK(screen)) SDL_UnlockSurface(screen);
-	SDL_Flip(screen);
+	// if (SDL_MUSTLOCK(screen)) SDL_UnlockSurface(screen);
+	uint32_t *s = (uint32_t*)screen->pixels;
+	uint32_t *d = (uint32_t*)RS97screen->pixels;
+	for(uint8_t y = 0; y < 240; y++, s += 160, d += 320) memmove(d, s, 1280); // double-line fix by pingflood, 2018
+	// SDL_Flip(screen);
 }
 
 /**
@@ -428,13 +444,13 @@ void FCEUI_SetAviDisableMovieMessages(bool disable) {
 
 //clear all screens (for multiple-buffering)
 void dingoo_clear_video(void) {
-	SDL_FillRect(screen,NULL,SDL_MapRGBA(screen->format, 0, 0, 0, 255));
-	SDL_Flip(screen);
-
-	SDL_FillRect(screen,NULL,SDL_MapRGBA(screen->format, 0, 0, 0, 255));
-	SDL_Flip(screen);
-#ifdef SDL_TRIPLEBUF
-	SDL_FillRect(screen,NULL,SDL_MapRGBA(screen->format, 0, 0, 0, 255));
-	SDL_Flip(screen);
-#endif
+	memset(RS97screen->pixels, 0, RS97screen->pitch * RS97screen->h);
+// 	SDL_FillRect(screen,NULL,SDL_MapRGBA(screen->format, 0, 0, 0, 255));
+// 	SDL_Flip(screen);
+// 	SDL_FillRect(screen,NULL,SDL_MapRGBA(screen->format, 0, 0, 0, 255));
+// 	SDL_Flip(screen);
+// #ifdef SDL_TRIPLEBUF
+// 	SDL_FillRect(screen,NULL,SDL_MapRGBA(screen->format, 0, 0, 0, 255));
+// 	SDL_Flip(screen);
+// #endif
 }

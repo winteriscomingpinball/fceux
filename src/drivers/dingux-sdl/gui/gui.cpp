@@ -12,7 +12,7 @@
 #include "font.h"
 
 // ...
-extern SDL_Surface* screen;
+extern SDL_Surface* RS97screen;
 extern int RunFileBrowser(char *source, char *romname, const char *types[],
 		const char *info = NULL);
 
@@ -46,8 +46,8 @@ void FCEUGUI_Flip()
 	SDL_Flip(screen);
 #else
   // fix for retrogame
-  SDL_SoftStretch(gui_screen, NULL, screen, NULL);
-	SDL_Flip(screen);
+  SDL_SoftStretch(gui_screen, NULL, RS97screen, NULL);
+	SDL_Flip(RS97screen);
 #endif
 }
 
