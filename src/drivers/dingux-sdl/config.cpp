@@ -430,5 +430,5 @@ void UpdateEMUCore(Config *config) {
 	}
 #endif
 
-	FCEUI_SetRenderedLines(start + 8, end - 8, start, end);
+	FCEUI_SetRenderedLines(start, end, start, end);
 }
