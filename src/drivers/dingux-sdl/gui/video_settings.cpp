@@ -112,7 +112,7 @@ static void slend_update(unsigned long key)
 static SettingEntry vd_menu[] = 
 {
 	{"Video scaling", "Select video scale mode", "SDL.Fullscreen", fullscreen_update},
-	{"Clip sides", "Clips left and right columns", "SDL.ClipSides", clip_update},
+	// {"Clip sides", "Clips left and right columns", "SDL.ClipSides", clip_update},
 	{"New PPU", "New PPU emulation engine", "SDL.NewPPU", newppu_update},
 	{"NTSC Palette", "Emulate NTSC TV's colors", "SDL.NTSCpalette", ntsc_update},
 	{"Tint", "Sets tint for NTSC color", "SDL.Tint", tint_update},
@@ -120,7 +120,7 @@ static SettingEntry vd_menu[] =
 	{"Scanline start", "The first drawn scanline", "SDL.ScanLineStart", slstart_update},
 	{"Scanline end", "The last drawn scanline", "SDL.ScanLineEnd", slend_update},
 };
-
+int vd_menu_items = 5;
 int RunVideoSettings()
 {
 	static int index = 0;
@@ -140,13 +140,13 @@ int RunVideoSettings()
 				index--; 
 				spy -= 15;
 			} else {
-				index = 6;
+				index = vd_menu_items;
 				spy = 72 + 15*index;
 			}
 		}
 
 		if (parsekey(DINGOO_DOWN, 1)) {
-			if (index < 6) {
+			if (index < vd_menu_items) {
 				index++;
 				spy += 15;
 			} else {
@@ -177,7 +177,7 @@ int RunVideoSettings()
 			DrawText(gui_screen, "Video Settings", 8, 37); 
 
 			// Draw menu
-			for(i=0,y=72;i < 7;i++,y+=15) {
+			for(i=0,y=72;i <= vd_menu_items;i++,y+=15) {
 				DrawText(gui_screen, vd_menu[i].name, 60, y);
 		
 				g_config->getOption(vd_menu[i].option, &itmp);
