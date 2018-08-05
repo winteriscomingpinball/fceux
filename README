@@ -1,17 +1,36 @@
-
- FCEU320 v0.3 
  FCEUX port for OpenDingux
- -------------------------------------------------------------
+-------------------------------------------------------------
  
- Thanks go to all people who worked on each incarnation of FCEU320: the_gama, ValdikSS and DiegoSLTS.
+Thanks go to all people who worked on each incarnation of FCEUX: the_gama, ValdikSS and DiegoSLTS, Steward-fu, gameblabla, pingflood.
+
+Controls
  
- The archive contains 3 files:
- fceu320/fceu320.dge - binary for legacy Dingux (Ritmix rzx50 and Dingoo a380/a320e) DO NOT USE FOR DINGOO A320 LEGACY DINGUX
- fceu320/fceu320-od.dge - binary for OpenDingux
- fc_emu.dge - bash-script replacement for native rzx50/a380/a320e emulators
- 
+ RS97          Nes
+-----------------------------------------------------
+ Pad           Pad
+ B             A
+ Y             B
+ X             TurboB
+ A             TurboA
+ Select        Select
+ Start         Start
+
+ R Shoulder    Hotkey combo
+ POWER         Open GUI screen
+
+ *Default Hotkeys*
+
+ R + A         Save state (current slot from gui is used)
+ R + B         Load state (current slot from gui is used)
+ R + X         Toggle fullscreen
+ R + Y         Flip fds disk
+ R + UP        Toggle framerate display
+ R + LEFT      Insert vsuni coin
+ R + SELECT    Save snapshot
+ R + START     Pause emulation
+
  HOWTO INSTALL FOR RITMIX RZX-50 AND DINGOO A380/A320e:
- - copy folder fceu320 with its contents to "emulator" folder of inner flash-memory of your handheld
+ - copy folder FCEUX with its contents to "emulator" folder of inner flash-memory of your handheld
  - replace native fc_emu.dge with a replacement from the archive
  - disconnect and play
  
@@ -30,41 +49,14 @@
 Noticed bugs/features:
  - When sound is off, the framerate lowers to 50 fps
  - Upscalers 280x240 and 320x240 ignore 8 left and 8 right pixels (critical for some games)
- 
-Controls
- 
- Dingoo				Nes
- -----------------------------------------------------
- Pad				Pad
- A				A
- B				B
- Y				TurboB
- X				TurboA
- Select				Select
- Start				Start
-
- R Shoulder		  	Hotkey combo
- L Shoulder			Open GUI screen
-
-
- *Default Hotkeys*
-
- R + A				Save state (current slot from gui is used)
- R + B 				Load state (current slot from gui is used)
- R + X				Toggle fullscreen
- R + Y				Flip fds disk
- R + UP				Toggle framerate display
- R + LEFT			Insert vsuni coin
- R + SELECT			Save snapshot
- R + START			Pause emulation
 
 
  Dmitry Smagin exmortis(at)yandex.ru
 
 
- FCEU320 v0.3
+ FCEUX v0.3
  FCEUx port for Dingux
- -------------------------------------------------------------
+-------------------------------------------------------------
 
  Features
 
@@ -73,7 +65,7 @@ Controls
  - Builtin nsf player
  - FDS support
    NOTE: You must put a copy of your fds bios (disksys.rom)
-	 in the /local/home/.fceux folder.
+    in the /local/home/.fceux folder.
  - 280x240 and fullscreen (320x240) video scale support.
  - Blur filter support
  - Fractional frameskip support: 1/3, 1/2 and 1. For example
@@ -86,7 +78,7 @@ Controls
          corresponding nes rom.
  - Custom palette support
    NOTE: As version 0.3 you need to choose the palette from the file
-	 browser.
+    browser.
  - Virtual mouse support; use the pad to move the cursor, A and B
    are the mouse buttons.
  - Support for zapper, oeka and other mouse (gun) like games.
