@@ -1,6 +1,18 @@
 
 SRC = src/
 
+CHAINPREFIX := /opt/mipsel-linux-uclibc
+CROSS_COMPILE := $(CHAINPREFIX)/usr/bin/mipsel-linux-
+
+CC = $(CROSS_COMPILE)gcc
+CXX = $(CROSS_COMPILE)g++
+AS = $(CROSS_COMPILE)as
+
+SYSROOT     := $(shell $(CC) --print-sysroot)
+SDL_CFLAGS  := $(shell $(SYSROOT)/usr/bin/sdl-config --cflags)
+SDL_LIBS    := $(shell $(SYSROOT)/usr/bin/sdl-config --libs)
+
+
 CORE_OBJS = \
 	$(SRC)cart.o $(SRC)cheat.o $(SRC)config.o $(SRC)movie.o $(SRC)oldmovie.o \
 	$(SRC)drawing.o $(SRC)fceu.o $(SRC)fds.o $(SRC)file.o $(SRC)conddebug.o \
@@ -187,14 +199,14 @@ DRIVER_OBJS = $(SRC)drivers/dingux-sdl/config.o $(SRC)drivers/dingux-sdl/input.o
 OBJS = $(CORE_OBJS) $(BOARDS_OBJS) $(INPUT_OBJS) $(MAPPERS_OBJS) $(UTILS_OBJS) \
 	$(COMMON_DRIVER_OBJS) $(DRIVER_OBJS)
 
-TOOLCHAIN=
-BINDIR=
-CC = mipsel-linux-gcc
-CXX = mipsel-linux-g++
-LD = mipsel-linux-g++
-AS = mipsel-linux-as
+#TOOLCHAIN=
+#BINDIR=
+#CC = mipsel-linux-gcc
+#CXX = mipsel-linux-g++
+#LD = mipsel-linux-g++
+#AS = mipsel-linux-as
 
-INCLUDEDIR=$(TOOLCHAIN)/include
+INCLUDEDIR=$(CHAINPREFIX)/include
 CFLAGS = -I$(INCLUDEDIR) -I$(SRC)
 CXXFLAGS = -I$(INCLUDEDIR)
 
@@ -231,6 +243,16 @@ $(TARGET): $(OBJS)
 	@echo Linking $@...
 	@echo $(LD) $(LDFLAGS) $(OBJS) -o fceux/$@
 	$(LD) $(LDFLAGS) $(OBJS) $(LIBS) -o fceux/$@
+
+ipk: $(TARGET)
+	@rm -rf /tmp/.fceux-ipk/ && mkdir -p /tmp/.fceux-ipk/root/home/retrofw/emus/fceux /tmp/.fceux-ipk/root/home/retrofw/apps/gmenu2x/sections/emulators
+	@cp fceux/bg.bmp fceux/fceux.dge fceux/fceux.man.txt fceux/fceux.png fceux/sp.bmp /tmp/.fceux-ipk/root/home/retrofw/emus/fceux
+	@cp fceux/fceux.lnk /tmp/.fceux-ipk/root/home/retrofw/apps/gmenu2x/sections/emulators
+	@sed "s/^Version:.*/Version: $$(date +%Y%m%d)/" fceux/control > /tmp/.fceux-ipk/control
+	@tar --owner=0 --group=0 -czvf /tmp/.fceux-ipk/control.tar.gz -C /tmp/.fceux-ipk/ control
+	@tar --owner=0 --group=0 -czvf /tmp/.fceux-ipk/data.tar.gz -C /tmp/.fceux-ipk/root/ .
+	@echo 2.0 > /tmp/.fceux-ipk/debian-binary
+	@ar r fceux/fceux.ipk /tmp/.fceux-ipk/control.tar.gz /tmp/.fceux-ipk/data.tar.gz /tmp/.fceux-ipk/debian-binary
 
 %.o: %.c
 	@echo Compiling $<...
