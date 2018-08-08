@@ -58,20 +58,16 @@ void upscale_320x448(uint32 *dst, uint8 *src)
 			gh = palettetranslate[*(uint16 *)(src + source + 6)] & 0xF7DEF7DE;
 
 			*dst++ = ab;
-			*dst++  = ((ab >> 17) + ((cd & 0xFFFF) >> 1)) + (cd << 16);
-			*dst++  = (cd >> 16) + (ef << 16);
-			*dst++  = (ef >> 16) + (((ef & 0xFFFF0000) >> 1) + ((gh & 0xFFFF) << 15));
-			*dst++  = gh;
+			*dst++ = ((ab >> 17) + ((cd & 0xFFFF) >> 1)) + (cd << 16);
+			*dst++ = (cd >> 16) + (ef << 16);
+			*dst++ = (ef >> 16) + (((ef & 0xFFFF0000) >> 1) + ((gh & 0xFFFF) << 15));
+			*dst++ = gh;
 
 			source += 8;
 
 		}
 		Eh += 224; 
-		if(Eh >= 448) 
-		{ 
-			Eh -= 448;
-			dh++; 
-		}
+		if(Eh >= 448) {Eh -= 448; dh++; }
 	}
 }
 
