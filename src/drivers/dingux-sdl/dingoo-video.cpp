@@ -40,7 +40,7 @@
 #include "../common/configSys.h"
 
 // GLOBALS
-SDL_Surface *RS97screen;
+// SDL_Surface *RS97screen;
 SDL_Surface *screen;
 SDL_Surface *nes_screen; // 256x224
 
@@ -177,8 +177,9 @@ int InitVideo(FCEUGI *gi) {
 		// 		break;
 		// 	}
 		// }
-		RS97screen = SDL_SetVideoMode(320, 480, 16, SDL_HWSURFACE);
-		screen = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 240, 16, 0, 0, 0, 0);
+		screen = SDL_SetVideoMode(320, 240, 16, SDL_HWSURFACE | SDL_DOUBLEBUF);
+		// RS97screen = SDL_SetVideoMode(320, 480, 16, SDL_HWSURFACE);
+		// screen = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 240, 16, 0, 0, 0, 0);
 		s_VideoModeSet = true;
 	}
 
@@ -391,10 +392,10 @@ void BlitScreen(uint8 *XBuf) {
 	// 			}
 	// 		}
 	// }
-	uint32_t *s = (uint32_t*)screen->pixels;
-	uint32_t *d = (uint32_t*)RS97screen->pixels;
-	for(uint8_t y = 0; y < 239; y++, s += 160, d += 320) memmove(d, s, 1280); // double-line fix by pingflood, 2018
-	// SDL_Flip(screen);
+	// uint32_t *s = (uint32_t*)screen->pixels;
+	// uint32_t *d = (uint32_t*)RS97screen->pixels;
+	// for(uint8_t y = 0; y < 239; y++, s += 160, d += 320) memmove(d, s, 1280); // double-line fix by pingflood, 2018
+	SDL_Flip(screen);
 }
 
 /**
@@ -425,11 +426,12 @@ void FCEUI_SetAviDisableMovieMessages(bool disable) {
 
 //clear all screens (for multiple-buffering)
 void dingoo_clear_video(void) {
-	memset(RS97screen->pixels, 0, RS97screen->pitch * RS97screen->h);
-// 	SDL_FillRect(screen,NULL,SDL_MapRGBA(screen->format, 0, 0, 0, 255));
-// 	SDL_Flip(screen);
-// 	SDL_FillRect(screen,NULL,SDL_MapRGBA(screen->format, 0, 0, 0, 255));
-// 	SDL_Flip(screen);
+	// memset(RS97screen->pixels, 0, RS97screen->pitch * RS97screen->h);
+	// memset(RS97screen->pixels, 0, RS97screen->pitch * RS97screen->h);
+	SDL_FillRect(screen,NULL,SDL_MapRGBA(screen->format, 0, 0, 0, 255));
+	SDL_Flip(screen);
+	SDL_FillRect(screen,NULL,SDL_MapRGBA(screen->format, 0, 0, 0, 255));
+	SDL_Flip(screen);
 // #ifdef SDL_TRIPLEBUF
 // 	SDL_FillRect(screen,NULL,SDL_MapRGBA(screen->format, 0, 0, 0, 255));
 // 	SDL_Flip(screen);

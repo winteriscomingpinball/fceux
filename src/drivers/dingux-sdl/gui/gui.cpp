@@ -12,7 +12,8 @@
 #include "font.h"
 
 // ...
-extern SDL_Surface* RS97screen;
+// extern SDL_Surface* RS97screen;
+extern SDL_Surface* screen;
 extern int RunFileBrowser(char *source, char *romname, const char *types[],
 		const char *info = NULL);
 
@@ -36,19 +37,23 @@ static int counter = 0;
 
 void FCEUGUI_Flip()
 {
-#if 0
-	SDL_Rect dstrect;
-
-	dstrect.x = (screen->w - 320) / 2;
-	dstrect.y = (screen->h - 240) / 2;
-
-	SDL_BlitSurface(gui_screen, 0, screen, &dstrect);
+	SDL_SoftStretch(gui_screen, NULL, screen, NULL);
 	SDL_Flip(screen);
-#else
-	// fix for retrogame
-	SDL_SoftStretch(gui_screen, NULL, RS97screen, NULL);
-	SDL_Flip(RS97screen);
-#endif
+
+
+// #if 1
+// 	SDL_Rect dstrect;
+
+// 	dstrect.x = (screen->w - 320) / 2;
+// 	dstrect.y = (screen->h - 240) / 2;
+
+// 	SDL_BlitSurface(gui_screen, 0, screen, &dstrect);
+// 	SDL_Flip(screen);
+// #else
+// 	// fix for retrogame
+// 	SDL_SoftStretch(gui_screen, NULL, RS97screen, NULL);
+// 	SDL_Flip(RS97screen);
+// #endif
 }
 
 void readkey() 
