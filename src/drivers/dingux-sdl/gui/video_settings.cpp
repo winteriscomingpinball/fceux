@@ -108,10 +108,9 @@ static void slend_update(unsigned long key)
 
 
 /* VIDEO SETTINGS MENU */
-
 static SettingEntry vd_menu[] = 
 {
-	{"Video scaling", "Select video scale mode", "SDL.Fullscreen", fullscreen_update},
+	// {"Video scaling", "Select video scale mode", "SDL.Fullscreen", fullscreen_update},
 	// {"Clip sides", "Clips left and right columns", "SDL.ClipSides", clip_update},
 	{"New PPU", "New PPU emulation engine", "SDL.NewPPU", newppu_update},
 	{"NTSC Palette", "Emulate NTSC TV's colors", "SDL.NTSCpalette", ntsc_update},

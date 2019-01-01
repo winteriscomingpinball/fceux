@@ -333,63 +333,67 @@ void BlitScreen(uint8 *XBuf) {
 
 	// register uint8 *pBuf = XBuf;
 
-	switch (s_fullscreen) {
-	    case 3: // fullscreen smooth
-			upscale_320x240_bilinearish((uint16_t *)RS97screen->pixels, (uint8_t *)XBuf + 256 * 8, 256);
-			break;
-	    case 2: // fullscreen
-			upscale_320x448((uint32 *)RS97screen->pixels, (uint8 *)XBuf + 256 * 8);
-			break;
-	    case 1: // aspect fullscreen
-	    	{
-				XBuf += (s_srendline * 256) + 8;
-				register uint16 *dest = (uint16 *) RS97screen->pixels;
-				dest += (screen->w * s_srendline) + (screen->w - 280) / 2 + ((screen->h - 240) / 2) * screen->w + 4800;
+	// switch (s_fullscreen) {
+	    // case 3: // fullscreen smooth
+			upscale_320x240_bilinearish_clip((uint32_t *)screen->pixels, (uint8_t *)XBuf + 256 * 8, 256);
+	// 		break;
+	//     case 2: // fullscreen
+	// 		upscale_320x240((uint32 *)screen->pixels, (uint8 *)XBuf + 256 * 8);
+	// 		// upscale_320x448((uint32 *)screen->pixels, (uint8 *)XBuf + 256 * 8);
+	// 		break;
+	//     case 1: // aspect fullscreen
+	//     	{
+	// 			XBuf += (s_srendline * 256) + 8;
+	// 			register uint16 *dest = (uint16 *) screen->pixels;
+	// 			dest += (screen->w * s_srendline) + (screen->w - 280) / 2 + ((screen->h - 240) / 2) * screen->w;// + 4800;
 
-				// semi fullscreen no blur
-				for (y = s_tlines; y; y--) {
-					for (x = 240; x; x -= 6) {
-						__builtin_prefetch(dest + 2, 1);
-						*dest++ = s_psdl[*XBuf];
-						*dest++ = s_psdl[*(XBuf + 1)];
-						*dest++ = s_psdl[*(XBuf + 2)];
-						*dest++ = s_psdl[*(XBuf + 3)];
-						*dest++ = s_psdl[*(XBuf + 3)];
-						*dest++ = s_psdl[*(XBuf + 4)];
-						*dest++ = s_psdl[*(XBuf + 5)];
-						XBuf += 6;
-					}
-					XBuf += 16;
-					dest += screen->w - 280 + 320;
-				}
-			}
-			break;
-	    default: // native res
-			{
-			int32 pinc = (screen->w - NWIDTH) >> 1;
-				register uint32 *dest = (uint32 *) RS97screen->pixels;
+	// 			// semi fullscreen no blur
+	// 			for (y = s_tlines; y; y--) {
+	// 				for (x = 240; x; x -= 6) {
+	// 					__builtin_prefetch(dest + 2, 1);
+	// 					*dest++ = s_psdl[*XBuf];
+	// 					*dest++ = s_psdl[*(XBuf + 1)];
+	// 					*dest++ = s_psdl[*(XBuf + 2)];
+	// 					*dest++ = s_psdl[*(XBuf + 3)];
+	// 					*dest++ = s_psdl[*(XBuf + 3)];
+	// 					*dest++ = s_psdl[*(XBuf + 4)];
+	// 					*dest++ = s_psdl[*(XBuf + 5)];
+	// 					XBuf += 6;
+	// 				}
+	// 				XBuf += 16;
+	// 				// dest += screen->w - 280 + 320;
+	// 				dest += 40;
+	// 			}
+	// 		}
+	// 		break;
+	//     default: // native res
+	// 		{
+	// 		int32 pinc = (screen->w - NWIDTH) >> 1;
+	// 			register uint32 *dest = (uint32 *) screen->pixels;
 	
-				// XXX soules - not entirely sure why this is being done yet
-				XBuf += (s_srendline * 256) + NOFFSET;
-				//dest += (s_srendline * 320) + pinc >> 1;
-				dest += (screen->w/2 * s_srendline) + pinc / 2 + ((screen->h - 240) / 4) * screen->w + 1600;
+	// 			// XXX soules - not entirely sure why this is being done yet
+	// 			XBuf += (s_srendline * 256) + NOFFSET;
+	// 			//dest += (s_srendline * 320) + pinc >> 1;
+	// 			// dest += (screen->w/2 * s_srendline) + pinc / 2 + ((screen->h - 240) / 4) * screen->w + 1600;
+	// 			dest += (screen->w/2 * s_srendline) + pinc / 2 + ((screen->h - 240) / 4) * screen->w;
 	
-				for (y = s_tlines; y; y--, XBuf += 256 - NWIDTH) {
-					for (x = NWIDTH >> 3; x; x--) {
-						__builtin_prefetch(dest + 4, 1);
-						*dest++ = palettetranslate[*(uint16 *) XBuf];
-						*dest++ = palettetranslate[*(uint16 *) (XBuf + 2)];
-						*dest++ = palettetranslate[*(uint16 *) (XBuf + 4)];
-						*dest++ = palettetranslate[*(uint16 *) (XBuf + 6)];
-						XBuf += 8;
-					}
-					dest += pinc + 160;
-				}
-			}
-	}
-	// uint32_t *s = (uint32_t*)screen->pixels;
-	// uint32_t *d = (uint32_t*)RS97screen->pixels;
-	// for(uint8_t y = 0; y < 240; y++, s += 160, d += 320) memmove(d, s, 1280); // double-line fix by pingflood, 2018
+	// 			for (y = s_tlines; y; y--, XBuf += 256 - NWIDTH) {
+	// 				for (x = NWIDTH >> 3; x; x--) {
+	// 					__builtin_prefetch(dest + 4, 1);
+	// 					*dest++ = palettetranslate[*(uint16 *) XBuf];
+	// 					*dest++ = palettetranslate[*(uint16 *) (XBuf + 2)];
+	// 					*dest++ = palettetranslate[*(uint16 *) (XBuf + 4)];
+	// 					*dest++ = palettetranslate[*(uint16 *) (XBuf + 6)];
+	// 					XBuf += 8;
+	// 				}
+	// 				// dest += pinc + 160;
+	// 				dest += pinc;
+	// 			}
+	// 		}
+	// }
+	uint32_t *s = (uint32_t*)screen->pixels;
+	uint32_t *d = (uint32_t*)RS97screen->pixels;
+	for(uint8_t y = 0; y < 239; y++, s += 160, d += 320) memmove(d, s, 1280); // double-line fix by pingflood, 2018
 	// SDL_Flip(screen);
 }
 

@@ -39,8 +39,6 @@ void upscale_320x448(uint32 *dst, uint8 *src)
 	int dh = 0;
 	int y, x;
 
-	dst += 3200;
-
 	for (y = 0; y < 448; y++)
 	{
 		source = dh * 256;
@@ -58,16 +56,20 @@ void upscale_320x448(uint32 *dst, uint8 *src)
 			gh = palettetranslate[*(uint16 *)(src + source + 6)] & 0xF7DEF7DE;
 
 			*dst++ = ab;
-			*dst++ = ((ab >> 17) + ((cd & 0xFFFF) >> 1)) + (cd << 16);
-			*dst++ = (cd >> 16) + (ef << 16);
-			*dst++ = (ef >> 16) + (((ef & 0xFFFF0000) >> 1) + ((gh & 0xFFFF) << 15));
-			*dst++ = gh;
+			*dst++  = ((ab >> 17) + ((cd & 0xFFFF) >> 1)) + (cd << 16);
+			*dst++  = (cd >> 16) + (ef << 16);
+			*dst++  = (ef >> 16) + (((ef & 0xFFFF0000) >> 1) + ((gh & 0xFFFF) << 15));
+			*dst++  = gh;
 
 			source += 8;
 
 		}
 		Eh += 224; 
-		if(Eh >= 448) {Eh -= 448; dh++; }
+		if(Eh >= 448) 
+		{ 
+			Eh -= 448;
+			dh++; 
+		}
 	}
 }
 
@@ -80,7 +82,7 @@ void upscale_320x240(uint32 *dst, uint8 *src)
 	int dh = 0;
 	int y, x;
 
-	for (y = 0; y < 240; y++, dst += 160)
+	for (y = 0; y < 240; y++)
 	{
 		source = dh * 256;
 
@@ -104,10 +106,10 @@ void upscale_320x240(uint32 *dst, uint8 *src)
 			}
 
 			*dst++ = ab;
-			*dst++ = ((ab >> 17) + ((cd & 0xFFFF) >> 1)) + (cd << 16);
-			*dst++ = (cd >> 16) + (ef << 16);
-			*dst++ = (ef >> 16) + (((ef & 0xFFFF0000) >> 1) + ((gh & 0xFFFF) << 15));
-			*dst++ = gh;
+			*dst++  = ((ab >> 17) + ((cd & 0xFFFF) >> 1)) + (cd << 16);
+			*dst++  = (cd >> 16) + (ef << 16);
+			*dst++  = (ef >> 16) + (((ef & 0xFFFF0000) >> 1) + ((gh & 0xFFFF) << 15));
+			*dst++  = gh;
 
 			source += 8;
 
@@ -809,46 +811,6 @@ void upscale_320x240_bilinearish_noclip(uint32_t* dst, uint8 *src, int width)
 			uint16_t _64 = palettetranslate[*(BlockSrc + 256 * 15 + 3)];
 			*(BlockDst + 320 * 16 + 3) = Weight3_1(_63, _64);
 			*(BlockDst + 320 * 16 + 4) = _64;
-
-			BlockSrc += 4;
-			BlockDst += 5;
-		}
-	}
-}
-
-void upscale_320x240_bilinearish(uint16_t* Dst16, uint8_t* Src16, int width)
-{
-	// uint8* Src16 = (uint8*) src;
-	// uint16_t* Dst16 = (uint16_t*) dst;
-	// There are 64 blocks of 4 pixels horizontally, and 239 of 1 vertically.
-	// Each block of 4x1 becomes 5x1.
-	uint32_t BlockX, BlockY;
-	uint8* BlockSrc;
-	uint16_t* BlockDst;
-	Dst16 += 6400;
-	for (BlockY = 0; BlockY < 224; BlockY++)
-	{
-		BlockSrc = Src16 + BlockY * 256 * 1;
-		BlockDst = Dst16 + BlockY * 320 * 2;
-		for (BlockX = 0; BlockX < 64; BlockX++)
-		{
-			/* Horizontally:
-			 * Before(4):
-			 * (a)(b)(c)(d)
-			 * After(5):
-			 * (a)(abbb)(bc)(cccd)(d)
-			 */
-
-			// -- Row 1 --
-			uint16_t  _1 = palettetranslate[*(BlockSrc               )];
-			*(BlockDst               ) = _1;
-			uint16_t  _2 = palettetranslate[*(BlockSrc            + 1)];
-			*(BlockDst            + 1) = Weight1_3( _1,  _2);
-			uint16_t  _3 = palettetranslate[*(BlockSrc            + 2)];
-			*(BlockDst            + 2) = Weight1_1( _2,  _3);
-			uint16_t  _4 = palettetranslate[*(BlockSrc            + 3)];
-			*(BlockDst            + 3) = Weight3_1( _3,  _4);
-			*(BlockDst            + 4) = _4;
 
 			BlockSrc += 4;
 			BlockDst += 5;

@@ -1,6 +1,18 @@
 
 SRC = src/
 
+CHAINPREFIX := /opt/mipsel-linux-uclibc
+CROSS_COMPILE := $(CHAINPREFIX)/usr/bin/mipsel-linux-
+
+CC = $(CROSS_COMPILE)gcc
+CXX = $(CROSS_COMPILE)g++
+AS = $(CROSS_COMPILE)as
+
+SYSROOT     := $(shell $(CC) --print-sysroot)
+SDL_CFLAGS  := $(shell $(SYSROOT)/usr/bin/sdl-config --cflags)
+SDL_LIBS    := $(shell $(SYSROOT)/usr/bin/sdl-config --libs)
+
+
 CORE_OBJS = \
 	$(SRC)cart.o $(SRC)cheat.o $(SRC)config.o $(SRC)movie.o $(SRC)oldmovie.o \
 	$(SRC)drawing.o $(SRC)fceu.o $(SRC)fds.o $(SRC)file.o $(SRC)conddebug.o \
@@ -187,14 +199,14 @@ DRIVER_OBJS = $(SRC)drivers/dingux-sdl/config.o $(SRC)drivers/dingux-sdl/input.o
 OBJS = $(CORE_OBJS) $(BOARDS_OBJS) $(INPUT_OBJS) $(MAPPERS_OBJS) $(UTILS_OBJS) \
 	$(COMMON_DRIVER_OBJS) $(DRIVER_OBJS)
 
-TOOLCHAIN=
-BINDIR=
-CC = mipsel-linux-gcc
-CXX = mipsel-linux-g++
-LD = mipsel-linux-g++
-AS = mipsel-linux-as
+#TOOLCHAIN=
+#BINDIR=
+#CC = mipsel-linux-gcc
+#CXX = mipsel-linux-g++
+#LD = mipsel-linux-g++
+#AS = mipsel-linux-as
 
-INCLUDEDIR=$(TOOLCHAIN)/include
+INCLUDEDIR=$(CHAINPREFIX)/include
 CFLAGS = -I$(INCLUDEDIR) -I$(SRC)
 CXXFLAGS = -I$(INCLUDEDIR)
 

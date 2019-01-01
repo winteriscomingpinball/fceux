@@ -45,8 +45,8 @@ void FCEUGUI_Flip()
 	SDL_BlitSurface(gui_screen, 0, screen, &dstrect);
 	SDL_Flip(screen);
 #else
-  // fix for retrogame
-  SDL_SoftStretch(gui_screen, NULL, RS97screen, NULL);
+	// fix for retrogame
+	SDL_SoftStretch(gui_screen, NULL, RS97screen, NULL);
 	SDL_Flip(RS97screen);
 #endif
 }
@@ -283,7 +283,6 @@ extern char FileBase[2048];
 
 int FCEUGUI_Init(FCEUGI *gi) 
 {
-
 	// create 565 RGB surface
 	gui_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 240, 16, 0xf800, 0x7e0, 0x1f, 0);
 	if(!gui_screen) printf("Error creating surface gui\n");

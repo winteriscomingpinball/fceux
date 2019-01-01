@@ -1,3 +1,17 @@
+TOOLCHAIN=
+BINDIR=
+
+CHAINPREFIX := /opt/rs97-toolchain-musl
+# CHAINPREFIX := /opt/mipsel-linux-uclibc
+CROSS_COMPILE := $(CHAINPREFIX)/usr/bin/mipsel-linux-
+
+CC = $(CROSS_COMPILE)gcc
+CXX = $(CROSS_COMPILE)g++
+AS = $(CROSS_COMPILE)as
+
+SYSROOT     := $(shell $(CC) --print-sysroot)
+SDL_CFLAGS  := $(shell $(SYSROOT)/usr/bin/sdl-config --cflags)
+SDL_LIBS    := $(shell $(SYSROOT)/usr/bin/sdl-config --libs)
 
 SRC = src/
 
@@ -202,24 +216,17 @@ DRIVER_OBJS = $(SRC)drivers/dingux-sdl/config.o $(SRC)drivers/dingux-sdl/input.o
 OBJS = $(CORE_OBJS) $(BOARDS_OBJS) $(INPUT_OBJS) $(MAPPERS_OBJS) $(UTILS_OBJS) \
 	$(COMMON_DRIVER_OBJS) $(DRIVER_OBJS)
 
-TOOLCHAIN=
-BINDIR=
-CC = /opt/rs97-toolchain/bin/mipsel-linux-gcc
-CXX = /opt/rs97-toolchain/bin/mipsel-linux-g++
-LD = /opt/rs97-toolchain/bin/mipsel-linux-g++
-AS = /opt/rs97-toolchain/bin/mipsel-linux-as
-
-INCLUDEDIR=$(TOOLCHAIN)/include
+INCLUDEDIR=$(CHAINPREFIX)/include
 CFLAGS = -I$(INCLUDEDIR) -I$(SRC)
 CXXFLAGS = -I$(INCLUDEDIR)
 
-LDFLAGS = -s
+LDFLAGS = -s $(SDL_LIBS)
 
 W_OPTS	= -Wno-write-strings -Wno-sign-compare
 
 F_OPTS = -fomit-frame-pointer -fno-builtin -fno-common
 
-CC_OPTS	= -O2 -ffast-math -msym32 -mips32 -mno-shared -mno-abicalls -mlong-calls -mno-mips16 -fdata-sections -ffunction-sections $(F_OPTS) $(W_OPTS) -I/home/steward/Downloads/buildroot-2017.02.9/output/host/usr/mipsel-buildroot-linux-uclibc/sysroot/usr/include/SDL
+CC_OPTS	= -O2 -mips32 $(F_OPTS) $(W_OPTS) $(SDL_CFLAGS)
 
 CFLAGS += $(CC_OPTS)
 CFLAGS += -DDINGUX \
@@ -229,12 +236,12 @@ CFLAGS += -DDINGUX \
 	  -DFRAMESKIP \
 	  -D_REENTRANT \
 	  -I$(INCLUDEDIR)/SDL -D_GNU_SOURCE=1 -D_REENTRANT
-CXXFLAGS += $(CFLAGS) -fno-rtti
-LDFLAGS  += $(CC_OPTS)
+CXXFLAGS += $(CFLAGS)
+# LDFLAGS  += $(CC_OPTS)
 ifdef STATIC
 LDFLAGS  += -static-libgcc -static-libstdc++
 endif
-LIBS = -L$(LIBDIR) `sdl-config --libs` -lz -lm -s -Wl,--as-needed -Wl,--gc-sections -flto -s
+LIBS = -L$(LIBDIR) `sdl-config --libs` -lz -lm
 
 TARGET = fceux.dge
 
@@ -244,8 +251,8 @@ $(TARGET): $(OBJS)
 	@mkdir -p fceux/
 	@cp src/drivers/dingux-sdl/gui/*.bmp fceux/
 	@echo Linking $@...
-	@echo $(LD) $(LDFLAGS) $(OBJS) -o fceux/$@
-	$(LD) $(LDFLAGS) $(OBJS) $(LIBS) -o fceux/$@
+	@echo $(CXX) $(LDFLAGS) $(OBJS) -o fceux/$@
+	$(CXX) $(LDFLAGS) $(OBJS) $(LIBS) -o fceux/$@
 
 %.o: %.c
 	@echo Compiling $<...
