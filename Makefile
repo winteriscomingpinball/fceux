@@ -220,7 +220,7 @@ INCLUDEDIR=$(CHAINPREFIX)/include
 CFLAGS = -I$(INCLUDEDIR) -I$(SRC)
 CXXFLAGS = -I$(INCLUDEDIR)
 
-LDFLAGS = -s $(SDL_LIBS)
+LDFLAGS = -s $(SDL_LIBS) -lSDL_image
 
 W_OPTS	= -Wno-write-strings -Wno-sign-compare
 
@@ -249,14 +249,14 @@ all: $(TARGET)
 
 $(TARGET): $(OBJS)
 	@mkdir -p fceux/
-	@cp src/drivers/dingux-sdl/gui/*.bmp fceux/
+	# @cp src/drivers/dingux-sdl/gui/*.bmp fceux/
 	@echo Linking $@...
 	@echo $(CXX) $(LDFLAGS) $(OBJS) -o fceux/$@
 	$(CXX) $(LDFLAGS) $(OBJS) $(LIBS) -o fceux/$@
 
 ipk: $(TARGET)
 	@rm -rf /tmp/.fceux-ipk/ && mkdir -p /tmp/.fceux-ipk/root/home/retrofw/emus/fceux /tmp/.fceux-ipk/root/home/retrofw/apps/gmenu2x/sections/emulators
-	@cp fceux/bg.bmp fceux/fceux.dge fceux/fceux.man.txt fceux/fceux.png fceux/sp.bmp /tmp/.fceux-ipk/root/home/retrofw/emus/fceux
+	@cp fceux/backdrop.png fceux/fceux.dge fceux/fceux.man.txt fceux/fceux.png fceux/sp.bmp /tmp/.fceux-ipk/root/home/retrofw/emus/fceux
 	@cp fceux/fceux.lnk /tmp/.fceux-ipk/root/home/retrofw/apps/gmenu2x/sections/emulators
 	@sed "s/^Version:.*/Version: $$(date +%Y%m%d)/" fceux/control > /tmp/.fceux-ipk/control
 	@tar --owner=0 --group=0 -czvf /tmp/.fceux-ipk/control.tar.gz -C /tmp/.fceux-ipk/ control

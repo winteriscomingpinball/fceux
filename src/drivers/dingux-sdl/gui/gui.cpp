@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <SDL/SDL.h>
+#include <SDL/SDL_image.h>
 
 #include "../dingoo.h"
 #include "../dingoo-video.h"
@@ -293,7 +294,8 @@ int FCEUGUI_Init(FCEUGI *gi)
 	if(!gui_screen) printf("Error creating surface gui\n");
 
 	// Load bg image
-	g_bg = SDL_LoadBMP("./bg.bmp");
+	// g_bg = SDL_LoadBMP("./bg.bmp");
+	g_bg = IMG_Load("./backdrop.png");
 
 	if (InitFont() < 0)
 		return -2;
