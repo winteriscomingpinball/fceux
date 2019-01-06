@@ -377,6 +377,7 @@ void FCEUGUI_Run() {
 				if (g_slot < 9) {
 					g_slot++;
 					FCEUI_SelectState(g_slot, 0);
+					load_preview();
 				}
 			}
 
@@ -384,10 +385,9 @@ void FCEUGUI_Run() {
 				if (g_slot > 0) {
 					g_slot--;
 					FCEUI_SelectState(g_slot, 0);
-					// load_preview();
+					load_preview();
 				}
 			}
-			load_preview();
 		}
 
 		// Must draw bg only when needed
