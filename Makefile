@@ -255,9 +255,10 @@ $(TARGET): $(OBJS)
 	$(CXX) $(LDFLAGS) $(OBJS) $(LIBS) -o fceux/$@
 
 ipk: $(TARGET)
-	@rm -rf /tmp/.fceux-ipk/ && mkdir -p /tmp/.fceux-ipk/root/home/retrofw/emus/fceux /tmp/.fceux-ipk/root/home/retrofw/apps/gmenu2x/sections/emulators
+	@rm -rf /tmp/.fceux-ipk/ && mkdir -p /tmp/.fceux-ipk/root/home/retrofw/emus/fceux /tmp/.fceux-ipk/root/home/retrofw/apps/gmenu2x/sections/emulators /tmp/.fceux-ipk/root/home/retrofw/apps/gmenu2x/sections/systems
 	@cp fceux/backdrop.png fceux/fceux.dge fceux/fceux.man.txt fceux/fceux.png fceux/sp.bmp /tmp/.fceux-ipk/root/home/retrofw/emus/fceux
 	@cp fceux/fceux.lnk /tmp/.fceux-ipk/root/home/retrofw/apps/gmenu2x/sections/emulators
+	@cp fceux/nes.fceux.lnk /tmp/.fceux-ipk/root/home/retrofw/apps/gmenu2x/sections/systems
 	@sed "s/^Version:.*/Version: $$(date +%Y%m%d)/" fceux/control > /tmp/.fceux-ipk/control
 	@tar --owner=0 --group=0 -czvf /tmp/.fceux-ipk/control.tar.gz -C /tmp/.fceux-ipk/ control
 	@tar --owner=0 --group=0 -czvf /tmp/.fceux-ipk/data.tar.gz -C /tmp/.fceux-ipk/root/ .
