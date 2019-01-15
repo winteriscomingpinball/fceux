@@ -282,6 +282,6 @@ ipk: $(TARGET)
 	$(CXX) $(CDEFS) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJS) fceux/$(TARGET)
+	rm -f $(OBJS) fceux/$(TARGET) fceux/fceux.ipk
 	rm -rf /tmp/.fceux-ipk/
 	
