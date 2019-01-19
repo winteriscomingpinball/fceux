@@ -156,32 +156,35 @@ int InitVideo(FCEUGI *gi) {
 			fprintf(stderr,"%s",SDL_GetError());
 		}
 
-	// initialize dingoo video mode
-	if (!s_VideoModeSet) {
-		uint32 vm = 0; // 0 - 320x240, 1 - 400x240, 2 - 480x272
+		// initialize dingoo video mode
+		if (!s_VideoModeSet) {
+			uint32 vm = 0; // 0 - 320x240, 1 - 400x240, 2 - 480x272
 
-		// #define NUMOFVIDEOMODES 3
-		// struct {
-		// 	uint32 x;
-		// 	uint32 y;
-		// } VModes[NUMOFVIDEOMODES] = {
-		// 	{320, 240},
-		// 	{400, 240},
-		// 	{480, 272}
-		// };
+			// #define NUMOFVIDEOMODES 3
+			// struct {
+			// 	uint32 x;
+			// 	uint32 y;
+			// } VModes[NUMOFVIDEOMODES] = {
+			// 	{320, 240},
+			// 	{400, 240},
+			// 	{480, 272}
+			// };
 
-		// for(vm = NUMOFVIDEOMODES-1; vm >= 0; vm--)
-		// {
-		// 	if(SDL_VideoModeOK(VModes[vm].x, VModes[vm].y, 16, SDL_HWSURFACE | DINGOO_MULTIBUF) != 0)
-		// 	{
-		// 		break;
-		// 	}
-		// }
-		screen = SDL_SetVideoMode(320, 240, 16, SDL_HWSURFACE | SDL_DOUBLEBUF);
+			// for(vm = NUMOFVIDEOMODES-1; vm >= 0; vm--)
+			// {
+			// 	if(SDL_VideoModeOK(VModes[vm].x, VModes[vm].y, 16, SDL_HWSURFACE | DINGOO_MULTIBUF) != 0)
+			// 	{
+					// screen = SDL_SetVideoMode(VModes[vm].x, VModes[vm].y, 16, SDL_HWSURFACE | DINGOO_MULTIBUF);
+					screen = SDL_SetVideoMode(320, 240, 16, SDL_HWSURFACE | DINGOO_MULTIBUF);
+					s_VideoModeSet = true;
+					// break;
+				// }
+			// }
+		}
 		// RS97screen = SDL_SetVideoMode(320, 480, 16, SDL_HWSURFACE);
 		// screen = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 240, 16, 0, 0, 0, 0);
-		s_VideoModeSet = true;
-	}
+		// s_VideoModeSet = true;
+	// }
 
 	// a hack to bind inner buffer to nes_screen surface
 	extern uint8 *XBuf;
@@ -332,69 +335,90 @@ void BlitScreen(uint8 *XBuf) {
 	// TODO - Move these to its own file?
 	if (SDL_MUSTLOCK(screen)) SDL_LockSurface(screen);
 
-	// register uint8 *pBuf = XBuf;
+	register uint8 *pBuf = XBuf;
 
-	// switch (s_fullscreen) {
-	    // case 3: // fullscreen smooth
-			upscale_320x240_bilinearish_clip((uint32_t *)screen->pixels, (uint8_t *)XBuf + 256 * 8, 256);
-	// 		break;
-	//     case 2: // fullscreen
-	// 		upscale_320x240((uint32 *)screen->pixels, (uint8 *)XBuf + 256 * 8);
-	// 		// upscale_320x448((uint32 *)screen->pixels, (uint8 *)XBuf + 256 * 8);
-	// 		break;
-	//     case 1: // aspect fullscreen
-	//     	{
-	// 			XBuf += (s_srendline * 256) + 8;
-	// 			register uint16 *dest = (uint16 *) screen->pixels;
-	// 			dest += (screen->w * s_srendline) + (screen->w - 280) / 2 + ((screen->h - 240) / 2) * screen->w;// + 4800;
+	switch (s_fullscreen) {
+	    case 3: // fullscreen smooth
+			if (s_clipSides) {
+				upscale_320x240_bilinearish_clip((uint32 *)screen->pixels, (uint8 *)XBuf + 256 * 8, 256);
+			} else {
+				upscale_320x240_bilinearish_noclip((uint32 *)screen->pixels, (uint8 *)XBuf + 256 * 8, 256);
+			}
+			break;
+	    case 2: // fullscreen
+			switch(screen->w) {
+				case 480: upscale_480x272((uint32 *)screen->pixels, (uint8 *)XBuf + 256 * 8); break;
+				case 400: upscale_384x240((uint32 *)screen->pixels, (uint8 *)XBuf + 256 * 8); break;
+				case 320: upscale_320x240((uint32 *)screen->pixels, (uint8 *)XBuf + 256 * 8); break;
+			}
+			break;
+	    case 1: // aspect fullscreen
+			switch(screen->w) {
+				case 480: upscale_384x272((uint32 *)screen->pixels, (uint8 *)XBuf + 256 * 8); break;
+				case 400:
+				case 320:
+					pBuf += (s_srendline * 256) + 8;
+					register uint16 *dest = (uint16 *) screen->pixels;
+					//dest += (320 * s_srendline) + 20;
+					dest += (screen->w * s_srendline) + (screen->w - 280) / 2 + ((screen->h - 240) / 2) * screen->w;
 
-	// 			// semi fullscreen no blur
-	// 			for (y = s_tlines; y; y--) {
-	// 				for (x = 240; x; x -= 6) {
-	// 					__builtin_prefetch(dest + 2, 1);
-	// 					*dest++ = s_psdl[*XBuf];
-	// 					*dest++ = s_psdl[*(XBuf + 1)];
-	// 					*dest++ = s_psdl[*(XBuf + 2)];
-	// 					*dest++ = s_psdl[*(XBuf + 3)];
-	// 					*dest++ = s_psdl[*(XBuf + 3)];
-	// 					*dest++ = s_psdl[*(XBuf + 4)];
-	// 					*dest++ = s_psdl[*(XBuf + 5)];
-	// 					XBuf += 6;
-	// 				}
-	// 				XBuf += 16;
-	// 				// dest += screen->w - 280 + 320;
-	// 				dest += 40;
-	// 			}
-	// 		}
-	// 		break;
-	//     default: // native res
-	// 		{
-	// 		int32 pinc = (screen->w - NWIDTH) >> 1;
-	// 			register uint32 *dest = (uint32 *) screen->pixels;
-	
-	// 			// XXX soules - not entirely sure why this is being done yet
-	// 			XBuf += (s_srendline * 256) + NOFFSET;
-	// 			//dest += (s_srendline * 320) + pinc >> 1;
-	// 			// dest += (screen->w/2 * s_srendline) + pinc / 2 + ((screen->h - 240) / 4) * screen->w + 1600;
-	// 			dest += (screen->w/2 * s_srendline) + pinc / 2 + ((screen->h - 240) / 4) * screen->w;
-	
-	// 			for (y = s_tlines; y; y--, XBuf += 256 - NWIDTH) {
-	// 				for (x = NWIDTH >> 3; x; x--) {
-	// 					__builtin_prefetch(dest + 4, 1);
-	// 					*dest++ = palettetranslate[*(uint16 *) XBuf];
-	// 					*dest++ = palettetranslate[*(uint16 *) (XBuf + 2)];
-	// 					*dest++ = palettetranslate[*(uint16 *) (XBuf + 4)];
-	// 					*dest++ = palettetranslate[*(uint16 *) (XBuf + 6)];
-	// 					XBuf += 8;
-	// 				}
-	// 				// dest += pinc + 160;
-	// 				dest += pinc;
-	// 			}
-	// 		}
-	// }
+					// semi fullscreen no blur
+					for (y = s_tlines; y; y--) {
+						for (x = 240; x; x -= 6) {
+							__builtin_prefetch(dest + 2, 1);
+							*dest++ = s_psdl[*pBuf];
+							*dest++ = s_psdl[*(pBuf + 1)];
+							*dest++ = s_psdl[*(pBuf + 2)];
+							*dest++ = s_psdl[*(pBuf + 3)];
+							*dest++ = s_psdl[*(pBuf + 3)];
+							*dest++ = s_psdl[*(pBuf + 4)];
+							*dest++ = s_psdl[*(pBuf + 5)];
+							pBuf += 6;
+						}
+						pBuf += 16;
+						//dest += 40;
+						dest += screen->w - 280;
+					}
+			}
+			break;
+	    default: // native res
+		{
+			//int pinc = (320 - NWIDTH) >> 1;
+			int32 pinc = (screen->w - NWIDTH) >> 1;
+
+			//SDL_Rect dstrect;
+
+			// center windows
+			//dstrect.x = (screen->w - 256) / 2;
+			//dstrect.y = (screen->h - 224) / 2;
+
+			// doesn't work in rzx-50 dingux
+			//SDL_BlitSurface(nes_screen, 0, screen, &dstrect);
+
+			register uint32 *dest = (uint32 *) screen->pixels;
+
+			// XXX soules - not entirely sure why this is being done yet
+			pBuf += (s_srendline * 256) + NOFFSET;
+			//dest += (s_srendline * 320) + pinc >> 1;
+			dest += (screen->w/2 * s_srendline) + pinc / 2 + ((screen->h - 240) / 4) * screen->w;
+
+			for (y = s_tlines; y; y--, pBuf += 256 - NWIDTH) {
+				for (x = NWIDTH >> 3; x; x--) {
+					__builtin_prefetch(dest + 4, 1);
+					*dest++ = palettetranslate[*(uint16 *) pBuf];
+					*dest++ = palettetranslate[*(uint16 *) (pBuf + 2)];
+					*dest++ = palettetranslate[*(uint16 *) (pBuf + 4)];
+					*dest++ = palettetranslate[*(uint16 *) (pBuf + 6)];
+					pBuf += 8;
+				}
+				dest += pinc;
+			}
+		}
+	}
 	// uint32_t *s = (uint32_t*)screen->pixels;
 	// uint32_t *d = (uint32_t*)RS97screen->pixels;
 	// for(uint8_t y = 0; y < 239; y++, s += 160, d += 320) memmove(d, s, 1280); // double-line fix by pingflood, 2018
+	if (SDL_MUSTLOCK(screen)) SDL_UnlockSurface(screen);
 	SDL_Flip(screen);
 }
 
@@ -428,12 +452,9 @@ void FCEUI_SetAviDisableMovieMessages(bool disable) {
 void dingoo_clear_video(void) {
 	// memset(RS97screen->pixels, 0, RS97screen->pitch * RS97screen->h);
 	// memset(RS97screen->pixels, 0, RS97screen->pitch * RS97screen->h);
-	SDL_FillRect(screen,NULL,SDL_MapRGBA(screen->format, 0, 0, 0, 255));
-	SDL_Flip(screen);
-	SDL_FillRect(screen,NULL,SDL_MapRGBA(screen->format, 0, 0, 0, 255));
-	SDL_Flip(screen);
-// #ifdef SDL_TRIPLEBUF
-// 	SDL_FillRect(screen,NULL,SDL_MapRGBA(screen->format, 0, 0, 0, 255));
-// 	SDL_Flip(screen);
-// #endif
+	SDL_FillRect(screen,NULL,SDL_MapRGBA(screen->format, 0, 0, 0, 255)); SDL_Flip(screen);
+	SDL_FillRect(screen,NULL,SDL_MapRGBA(screen->format, 0, 0, 0, 255)); SDL_Flip(screen);
+#ifdef SDL_TRIPLEBUF
+	SDL_FillRect(screen,NULL,SDL_MapRGBA(screen->format, 0, 0, 0, 255)); SDL_Flip(screen);
+#endif
 }

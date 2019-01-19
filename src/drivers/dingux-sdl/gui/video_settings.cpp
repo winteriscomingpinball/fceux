@@ -110,8 +110,8 @@ static void slend_update(unsigned long key)
 /* VIDEO SETTINGS MENU */
 static SettingEntry vd_menu[] = 
 {
-	// {"Video scaling", "Select video scale mode", "SDL.Fullscreen", fullscreen_update},
-	// {"Clip sides", "Clips left and right columns", "SDL.ClipSides", clip_update},
+	{"Video scaling", "Select video scale mode", "SDL.Fullscreen", fullscreen_update},
+	{"Clip sides", "Clips left and right columns", "SDL.ClipSides", clip_update},
 	{"New PPU", "New PPU emulation engine", "SDL.NewPPU", newppu_update},
 	{"NTSC Palette", "Emulate NTSC TV's colors", "SDL.NTSCpalette", ntsc_update},
 	{"Tint", "Sets tint for NTSC color", "SDL.Tint", tint_update},
@@ -119,7 +119,7 @@ static SettingEntry vd_menu[] =
 	{"Scanline start", "The first drawn scanline", "SDL.ScanLineStart", slstart_update},
 	{"Scanline end", "The last drawn scanline", "SDL.ScanLineEnd", slend_update},
 };
-int vd_menu_items = 5;
+int vd_menu_items = 7;
 int RunVideoSettings()
 {
 	static int index = 0;
