@@ -1,7 +1,6 @@
 title=FCEUX
 description=NES/FC Emulator
 exec=/home/retrofw/emus/fceux/fceux.dge
-selectorbrowser=true
 selectordir=/home/retrofw/roms/nes
 selectorfilter=.zip,.nes,.fds
 clock=600
