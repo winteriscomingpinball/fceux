@@ -87,18 +87,18 @@ int RunControlSettings()
 	while (!done) {
 		// Parse input
 		readkey();
-		if (parsekey(DINGOO_SELECT)) {
-			if(index < 4) // Allow edit mode only for button mapping menu items
-			{
-				editMode = 1;
-				DrawText(gui_screen, ">>", 185, spy);
-				g_dirty = 0;
-			}
-		}
+		// if (parsekey(DINGOO_SELECT)) {
+		// if (parsekey(DINGOO_A)) {
+		// }
 
 		if (!editMode) {
 			if (parsekey(DINGOO_A)) {
-				if (index > 3) {
+				if(index < 4) // Allow edit mode only for button mapping menu items
+				{
+					editMode = 1;
+					DrawText(gui_screen, ">>", 185, spy);
+					g_dirty = 0;
+				} else { // if (index > 3) {
 					cm_menu[index].update(g_key);
 				}
 			}
@@ -123,8 +123,8 @@ int RunControlSettings()
 
 				done= err;
 			}
-		}	
-		if ( !editMode ) {
+		// }	
+		// if ( !editMode ) {
 	   		if (parsekey(DINGOO_UP, 1)) {
 				if (index > 0) {
 					index--; 
@@ -156,9 +156,7 @@ int RunControlSettings()
 					cm_menu[index].update(g_key);
 				}
 			}
-		}
-
-		if ( editMode ) {
+		} else { //		if ( editMode ) {
 			if (parsekey(DINGOO_A, 0) || parsekey(DINGOO_B, 0) || parsekey(DINGOO_X, 0) || parsekey(DINGOO_Y, 0)) {
 				cm_menu[index].update(g_key);
 				g_dirty = 1;
@@ -185,7 +183,7 @@ int RunControlSettings()
 			if (err == 0) {
 				DrawText(gui_screen, "!!!Error - Duplicate Key Mapping!!! ", 8, 37);
 			} else {
-				DrawText(gui_screen, "Control Settings - Press select to edit", 8, 37);
+				DrawText(gui_screen, "Control Settings", 8, 37);
 			}
 
 			// Draw menu
@@ -206,10 +204,10 @@ int RunControlSettings()
 					g_config->getOption("SDL.MergeControls", &mergeValue);
 					sprintf(cBtn, "%s", mergeValue ? "on" : "off");
 				}
-				else if (iBtnVal == DefaultGamePad[0][0]) sprintf(cBtn, "%s", "GCW_A");
-				else if (iBtnVal == DefaultGamePad[0][1]) sprintf(cBtn, "%s", "GCW_B");
-				else if (iBtnVal == DefaultGamePad[0][8]) sprintf(cBtn, "%s", "GCW_X");
-				else if (iBtnVal == DefaultGamePad[0][9]) sprintf(cBtn, "%s", "GCW_Y");
+				else if (iBtnVal == DefaultGamePad[0][0]) sprintf(cBtn, "%s", "A");
+				else if (iBtnVal == DefaultGamePad[0][1]) sprintf(cBtn, "%s", "B");
+				else if (iBtnVal == DefaultGamePad[0][8]) sprintf(cBtn, "%s", "X");
+				else if (iBtnVal == DefaultGamePad[0][9]) sprintf(cBtn, "%s", "Y");
 				else sprintf(cBtn, "%s", "<empty>");
 
 				DrawText(gui_screen, cBtn, 210, y);
