@@ -15,6 +15,7 @@ Controls
  Select        Select
  Start         Start
 
+ L Shoulder    Fast forward
  R Shoulder    Hotkey combo
  POWER         Open GUI screen
 
