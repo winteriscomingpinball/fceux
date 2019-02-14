@@ -207,7 +207,7 @@ _exit:
 
     // If we have too much audio, wait a bit before accepting more.
     // This keeps the lag in check.
-    while (GetBufferedSound() >= 2 * GetBufferSize())
+    while (GetBufferedSound() > 3 * GetBufferSize())
         usleep(1000);
 }
 
