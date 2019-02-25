@@ -217,10 +217,9 @@ OBJS = $(CORE_OBJS) $(BOARDS_OBJS) $(INPUT_OBJS) $(MAPPERS_OBJS) $(UTILS_OBJS) \
 	$(COMMON_DRIVER_OBJS) $(DRIVER_OBJS)
 
 INCLUDEDIR=$(CHAINPREFIX)/include
-CFLAGS = -I$(INCLUDEDIR) -I$(SRC)
-CXXFLAGS = -I$(INCLUDEDIR)
-
-LDFLAGS = -s $(SDL_LIBS) -lSDL_image
+CFLAGS = -I$(INCLUDEDIR) -I$(SRC) -flto
+CXXFLAGS = -I$(INCLUDEDIR) -flto
+LDFLAGS = -s $(SDL_LIBS) -lSDL_image -flto
 
 W_OPTS	= -Wno-write-strings -Wno-sign-compare
 
@@ -255,10 +254,10 @@ $(TARGET): $(OBJS)
 	$(CXX) $(LDFLAGS) $(OBJS) $(LIBS) -o fceux/$@
 
 ipk: $(TARGET)
-	@rm -rf /tmp/.fceux-ipk/ && mkdir -p /tmp/.fceux-ipk/root/home/retrofw/emus/fceux /tmp/.fceux-ipk/root/home/retrofw/apps/gmenu2x/sections/emulators /tmp/.fceux-ipk/root/home/retrofw/apps/gmenu2x/sections/systems
+	@rm -rf /tmp/.fceux-ipk/ && mkdir -p /tmp/.fceux-ipk/root/home/retrofw/emus/fceux /tmp/.fceux-ipk/root/home/retrofw/apps/gmenu2x/sections/emulators /tmp/.fceux-ipk/root/home/retrofw/apps/gmenu2x/sections/emulators.systems
 	@cp fceux/backdrop.png fceux/fceux.dge fceux/fceux.man.txt fceux/fceux.png fceux/sp.bmp /tmp/.fceux-ipk/root/home/retrofw/emus/fceux
 	@cp fceux/fceux.lnk /tmp/.fceux-ipk/root/home/retrofw/apps/gmenu2x/sections/emulators
-	@cp fceux/nes.fceux.lnk /tmp/.fceux-ipk/root/home/retrofw/apps/gmenu2x/sections/systems
+	@cp fceux/nes.fceux.lnk /tmp/.fceux-ipk/root/home/retrofw/apps/gmenu2x/sections/emulators.systems
 	@sed "s/^Version:.*/Version: $$(date +%Y%m%d)/" fceux/control > /tmp/.fceux-ipk/control
 	@cp fceux/conffiles /tmp/.fceux-ipk/
 	@tar --owner=0 --group=0 -czvf /tmp/.fceux-ipk/control.tar.gz -C /tmp/.fceux-ipk/ control conffiles
