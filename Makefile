@@ -235,11 +235,19 @@ CFLAGS += -DDINGUX \
 	  -DFRAMESKIP \
 	  -D_REENTRANT \
 	  -I$(INCLUDEDIR)/SDL -D_GNU_SOURCE=1 -D_REENTRANT
+
+CFLAGS += -fprofile-generate -fprofile-dir=/home/retrofw/profile/fceux
+# CFLAGS += -fprofile-use -fprofile-dir=./profile -DNO_ROM_BROWSER
+
 CXXFLAGS += $(CFLAGS)
+# LDFLAGS  += $(CFLAGS)
 # LDFLAGS  += $(CC_OPTS)
 ifdef STATIC
 LDFLAGS  += -static-libgcc -static-libstdc++
 endif
+LDFLAGS += -fprofile-generate -fprofile-dir=/home/retrofw/profile/fceux
+
+
 LIBS = -L$(LIBDIR) `sdl-config --libs` -lz -lm
 
 TARGET = fceux.dge
@@ -260,7 +268,9 @@ ipk: $(TARGET)
 	@cp fceux/nes.fceux.lnk /tmp/.fceux-ipk/root/home/retrofw/apps/gmenu2x/sections/emulators.systems
 	@sed "s/^Version:.*/Version: $$(date +%Y%m%d)/" fceux/control > /tmp/.fceux-ipk/control
 	@cp fceux/conffiles /tmp/.fceux-ipk/
-	@tar --owner=0 --group=0 -czvf /tmp/.fceux-ipk/control.tar.gz -C /tmp/.fceux-ipk/ control conffiles
+	# echo -e "#!/bin/sh\nmkdir -p /home/retrofw/profile/fceux; exit 0" > /tmp/.fceux-ipk/preinst
+	# chmod +x /tmp/.gmenu-ipk/postinst /tmp/.fceux-ipk/preinst
+	@tar --owner=0 --group=0 -czvf /tmp/.fceux-ipk/control.tar.gz -C /tmp/.fceux-ipk/ control conffiles preinst
 	@tar --owner=0 --group=0 -czvf /tmp/.fceux-ipk/data.tar.gz -C /tmp/.fceux-ipk/root/ .
 	@echo 2.0 > /tmp/.fceux-ipk/debian-binary
 	@ar r fceux/fceux.ipk /tmp/.fceux-ipk/control.tar.gz /tmp/.fceux-ipk/data.tar.gz /tmp/.fceux-ipk/debian-binary

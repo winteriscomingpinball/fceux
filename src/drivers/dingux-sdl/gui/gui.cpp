@@ -273,16 +273,22 @@ static int cmd_exit() {
 /* MAIN MENU */
 
 static MenuEntry main_menu[] = { 
-		// { "Load ROM", "Load new rom or movie", load_rom },
 		{ "Load state", "Load emulation state", load_state },
 		{ "Save state", "Save current state", save_state },
 		{ "Screenshot", "Save current frame shot", save_screenshot },
 		{ "Flip disc", "Switch side or disc (FDS)", flip_disc },
-		{ "Settings", "Change current settings", cmd_settings_menu },
 		{ "Reset", "Reset NES", reset_nes },
+#ifndef NO_ROM_BROWSER
+		{ "Load ROM", "Load new rom or movie", load_rom },
+#endif
+		{ "Settings", "Change current settings", cmd_settings_menu },
 		{ "Exit", "Exit emulator", cmd_exit } 
 };
-int main_menu_items = 6;
+#ifdef NO_ROM_BROWSER
+	int main_menu_items = 6;
+#else NO_ROM_BROWSER
+	int main_menu_items = 7;
+#endif
 
 
 extern char FileBase[2048];
