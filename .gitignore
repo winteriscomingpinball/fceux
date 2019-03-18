@@ -4,3 +4,4 @@
 *.opk
 *.ipk
 fceux/fceux.dge
+profile/*
