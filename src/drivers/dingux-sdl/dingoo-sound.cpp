@@ -37,7 +37,7 @@ static unsigned int s_BufferSize;
 static unsigned int s_BufferRead;
 static unsigned int s_BufferWrite;
 static volatile unsigned int s_BufferIn;
-
+extern int fastforward;
 static int s_mute = 0;
 
 SDL_AudioSpec spec;
@@ -169,13 +169,12 @@ uint32 GetBufferedSound(void) {
     return s_BufferIn;
 }
 
-
 // a hack to check DINGOO_R hotkey combo
-static int ispressed(int sdlk_code)
-{
-    Uint8 *keystate = SDL_GetKeyState(NULL);
-    return !!(keystate[sdlk_code]);
-}
+// static int ispressed(int sdlk_code)
+// {
+//     Uint8 *keystate = SDL_GetKeyState(NULL);
+//     return !!(keystate[sdlk_code]);
+// }
 
 /**
  * Send a sound clip to the audio subsystem.
@@ -183,7 +182,8 @@ static int ispressed(int sdlk_code)
 void WriteSound(int32 *buf, int Count) 
 {
     //extern int EmulationPaused;
-    if(ispressed(DINGOO_L)) {
+    // if(ispressed(DINGOO_L)) {
+    if(fastforward) {
         Count /= 2;
     }
 
