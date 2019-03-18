@@ -48,6 +48,9 @@
 int NoWaiting = 1;
 extern Config *g_config;
 extern bool bindSavestate, frameAdvanceLagSkip, lagCounterDisplay;
+// counter for autofire
+extern int rapidAlternator;
+int fastforward = 0;
 
 /* UsrInputType[] is user-specified.  InputType[] is current
  (game loading can override user settings)
@@ -310,6 +313,11 @@ static void KeyboardCommands() {
 		return;
 	}
 
+    // toggle fastforwad
+    if(ispressed(DINGOO_L)) {
+        fastforward = !fastforward;
+        resetkey(DINGOO_L);
+    }
 	// R shift + combokeys
 	if(ispressed(DINGOO_R)) {
 		extern int g_slot; // import from gui.cpp
@@ -725,13 +733,10 @@ static void UpdateGamepad(void) {
 		return;
 	}
 
-	static int rapid = 0;
 	uint32 JS = 0;
 	int x;
 	int wg;
 	int merge;
-
-	rapid ^= 1;
 
 	g_config->getOption("SDL.MergeControls", &merge);
 
@@ -749,7 +754,7 @@ static void UpdateGamepad(void) {
 		}
 
 		// rapid-fire a, rapid-fire b
-		if (rapid) {
+		if (rapidAlternator) {
 			for (x = 0; x < 2; x++) {
 				if (DTestButton(&GamePadConfig[wg][8 + x])) {
 					JS |= (1 << x) << (wg << 3);
@@ -1153,6 +1158,30 @@ void UpdateInput(Config *config) {
 	char buf[64];
 	std::string device, prefix;
 
+    // update autofire pattern
+    {
+        int autoFireFPS = 30;
+        config->getOption("SDL.AutoFireFPS", &autoFireFPS);
+        switch(autoFireFPS) {
+            default:
+            case 30:
+                SetAutoFirePattern(1, 1);
+                break;
+            case 20:
+                SetAutoFirePattern(2, 1);
+                break;
+            case 15:
+                SetAutoFirePattern(2, 2);
+                break;
+            case 10:
+                SetAutoFirePattern(3, 3);
+                break;
+            case 7:
+                SetAutoFirePattern(4, 4);
+                break;
+        }
+    }
+
 	for (unsigned int i = 0; i < 3; i++) {
 		snprintf(buf, 64, "SDL.Input.%d", i);
 		config->getOption(buf, &device);
@@ -1388,6 +1417,7 @@ void UpdateInput(Config *config) {
 		fkbmap[j].NumC = 1;
 	}
 #endif
+
 }
 // Definitions from main.h:
 // GamePad defaults
