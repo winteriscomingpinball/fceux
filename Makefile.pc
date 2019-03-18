@@ -210,16 +210,15 @@ LD = g++
 AS = as
 
 INCLUDEDIR=$(TOOLCHAIN)/include
-CFLAGS = -I$(INCLUDEDIR) -I$(SRC)
-CXXFLAGS = -I$(INCLUDEDIR)
-
-LDFLAGS = -s
+CFLAGS = -I$(INCLUDEDIR) -I$(SRC) -flto
+CXXFLAGS = -I$(INCLUDEDIR) -flto
+LDFLAGS = $(SDL_LIBS) -lSDL_image -flto
 
 W_OPTS	= -Wno-write-strings -Wno-sign-compare
 
 F_OPTS = -fomit-frame-pointer -fno-builtin -fno-common
 
-CC_OPTS	= -O2  -fdata-sections -ffunction-sections $(F_OPTS) $(W_OPTS) -I/home/steward/Downloads/buildroot-2017.02.9/output/host/usr/mipsel-buildroot-linux-uclibc/sysroot/usr/include/SDL
+CC_OPTS	= -O0 -ggdb -fdata-sections -ffunction-sections $(F_OPTS) $(W_OPTS) -I/home/steward/Downloads/buildroot-2017.02.9/output/host/usr/mipsel-buildroot-linux-uclibc/sysroot/usr/include/SDL
 
 CFLAGS += $(CC_OPTS)
 CFLAGS += -DDINGUX \
@@ -234,7 +233,7 @@ LDFLAGS  += $(CC_OPTS)
 ifdef STATIC
 LDFLAGS  += -static-libgcc -static-libstdc++
 endif
-LIBS = -L$(LIBDIR) `sdl-config --libs` -lz -lm -s -Wl,--as-needed -Wl,--gc-sections -flto -s
+LIBS = -L$(LIBDIR) `sdl-config --libs` -lz -lm -Wl,--as-needed -Wl,--gc-sections -flto
 
 TARGET = fceux.dge
 

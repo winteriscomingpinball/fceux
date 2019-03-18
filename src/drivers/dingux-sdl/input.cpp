@@ -51,6 +51,7 @@ extern bool bindSavestate, frameAdvanceLagSkip, lagCounterDisplay;
 // counter for autofire
 extern int rapidAlternator;
 int fastforward = 0;
+int inputmenu = 0;
 
 /* UsrInputType[] is user-specified.  InputType[] is current
  (game loading can override user settings)
@@ -299,13 +300,7 @@ static void KeyboardCommands() {
 		FCEUI_SetRenderPlanes(true, state);
 	}
 
-	// L (SDLK_TAB), Start+Select or Power flick (SDLK_HOME) - enter GUI
-	// if (_keyonly(DINGOO_MENU)
-	if ((ispressed(DINGOO_SELECT) && _keyonly(DINGOO_START))
-	|| _keyonly(DINGOO_MENU)
-	|| MenuRequested
-	 /*|| (ispressed(DINGOO_START) && ispressed(DINGOO_SELECT))*/
-	 ) {
+	if (MenuRequested) {
 		SilenceSound(1);
 		MenuRequested = false;
 		FCEUGUI_Run();
@@ -662,11 +657,15 @@ static void UpdatePhysicalInput()
             }
             break;
         case SDL_KEYDOWN:
-            if (event.key.keysym.sym == DINGOO_MENU)
-                // Because a KEYUP is sent straight after the KEYDOWN for the
-                // Power switch, SDL_GetKeyState will not ever see this.
-                // Keep a record of it.
-                MenuRequested = true;
+			if (
+				((inputmenu == 0 || inputmenu == 1) && event.key.keysym.sym == DINGOO_MENU)
+				|| ((inputmenu == 0 || inputmenu == 2) && (g_keyState[DINGOO_SELECT] && event.key.keysym.sym == DINGOO_START))
+			) {
+	            // Because a KEYUP is sent straight after the KEYDOWN for the
+	            // Power switch, SDL_GetKeyState will not ever see this.
+	            // Keep a record of it.
+	            MenuRequested = true;
+			}
             break;
         default:
             // do nothing
@@ -1158,6 +1157,8 @@ void UpdateInput(Config *config) {
 	char buf[64];
 	std::string device, prefix;
 
+	g_config->getOption("SDL.InputMenu", &inputmenu);
+printf("\n\ninputmenu: %d\n\n", inputmenu);
     // update autofire pattern
     {
         int autoFireFPS = 30;
@@ -1417,7 +1418,6 @@ void UpdateInput(Config *config) {
 		fkbmap[j].NumC = 1;
 	}
 #endif
-
 }
 // Definitions from main.h:
 // GamePad defaults
