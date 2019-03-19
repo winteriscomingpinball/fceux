@@ -285,6 +285,8 @@ static MenuEntry main_menu[] = {
 		{ "Settings", "Change current settings", cmd_settings_menu },
 		{ "Exit", "Exit emulator", cmd_exit } 
 };
+static int main_menu_items;
+
 // #ifdef NO_ROM_BROWSER
 // 	int main_menu_items = 6;
 // #else NO_ROM_BROWSER
@@ -306,6 +308,14 @@ int FCEUGUI_Init(FCEUGI *gi)
 
 	if (InitFont() < 0)
 		return -2;
+
+	main_menu_items = sizeof(main_menu) / sizeof(main_menu[0]);
+
+	if (g_romtype != GIT_FDS) { // Remove "Flip disc" if not a FDS
+		for (int i = 3; i < main_menu_items - 1; i++)
+			main_menu[i] = main_menu[i+1];
+		main_menu_items--;
+	}
 
 	if (gi) {
 		// if (strlen(FileBase) > 28) {
@@ -347,14 +357,6 @@ void FCEUGUI_Run() {
 	static int index = 0;
 	static int spy = 72;
 	int done = 0, y, i;
-
-	static int main_menu_items = sizeof(main_menu) / sizeof(main_menu[0]);
-
-	if (g_romtype != GIT_FDS) { // Remove "Flip disc" if not a FDS
-		for (i = 3; i < main_menu_items - 1; i++)
-			main_menu[i] = main_menu[i+1];
-		main_menu_items--;
-	}
 
 	load_preview();
 
