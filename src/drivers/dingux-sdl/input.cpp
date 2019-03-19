@@ -1158,7 +1158,7 @@ void UpdateInput(Config *config) {
 	std::string device, prefix;
 
 	g_config->getOption("SDL.InputMenu", &inputmenu);
-printf("\n\ninputmenu: %d\n\n", inputmenu);
+
     // update autofire pattern
     {
         int autoFireFPS = 30;

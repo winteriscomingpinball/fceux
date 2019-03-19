@@ -56,7 +56,7 @@ RESTART:
 		// TODO - put exit keys
 
 		// Go to previous folder or return ...
-		if (parsekey(DINGOO_B)) {
+		if (parsekey(DINGOO_X)) {
 			list->Enter(-1);
 			goto RESTART;
 		}
@@ -72,7 +72,7 @@ RESTART:
 			}
 		}
 
-		if (parsekey(DINGOO_X)) {
+		if (parsekey(DINGOO_B)) {
 			return 0;
 		}
 

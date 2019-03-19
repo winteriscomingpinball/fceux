@@ -4,84 +4,84 @@ extern Config *g_config;
 /* MENU COMMANDS */
 
 // Use PAL or NTSC rate
-static void pal_update(unsigned long key) {
-	int val;
+// static void pal_update(unsigned long key) {
+// 	int val;
 
-	if (key == DINGOO_RIGHT)
-		val = 1;
-	if (key == DINGOO_LEFT)
-		val = 0;
+// 	if (key == DINGOO_RIGHT)
+// 		val = 1;
+// 	if (key == DINGOO_LEFT)
+// 		val = 0;
 
-	g_config->setOption("SDL.PAL", val);
-}
+// 	g_config->setOption("SDL.PAL", val);
+// }
 
 // TODO - Open game genie screen
-static void gg_update(unsigned long key) {
-	int val;
+// static void gg_update(unsigned long key) {
+// 	int val;
 
-	if (key == DINGOO_RIGHT)
-		val = 1;
-	if (key == DINGOO_LEFT)
-		val = 0;
+// 	if (key == DINGOO_RIGHT)
+// 		val = 1;
+// 	if (key == DINGOO_LEFT)
+// 		val = 0;
 
-	g_config->setOption("SDL.GameGenie", val);
-}
+// 	g_config->setOption("SDL.GameGenie", val);
+// }
 
-static void sprite_limit_update(unsigned long key) {
-	int val;
+// static void sprite_limit_update(unsigned long key) {
+// 	int val;
 
-	if (key == DINGOO_RIGHT)
-		val = 1;
-	if (key == DINGOO_LEFT)
-		val = 0;
+// 	if (key == DINGOO_RIGHT)
+// 		val = 1;
+// 	if (key == DINGOO_LEFT)
+// 		val = 0;
 
-	g_config->setOption("SDL.DisableSpriteLimit", val);
-}
+// 	g_config->setOption("SDL.DisableSpriteLimit", val);
+// }
 
-static void throttle_update(unsigned long key) {
-	int val;
+// static void throttle_update(unsigned long key) {
+// 	int val;
 
-	if (key == DINGOO_RIGHT)
-		val = 1;
-	if (key == DINGOO_LEFT)
-		val = 0;
+// 	if (key == DINGOO_RIGHT)
+// 		val = 1;
+// 	if (key == DINGOO_LEFT)
+// 		val = 0;
 
-	g_config->setOption("SDL.FPSThrottle", val);
-}
+// 	g_config->setOption("SDL.FPSThrottle", val);
+// }
 
-static void showfps_update(unsigned long key) {
-	int val;
+// static void showfps_update(unsigned long key) {
+// 	int val;
 
-	if (key == DINGOO_RIGHT)
-		val = 1;
-	if (key == DINGOO_LEFT)
-		val = 0;
+// 	if (key == DINGOO_RIGHT)
+// 		val = 1;
+// 	if (key == DINGOO_LEFT)
+// 		val = 0;
 
-	g_config->setOption("SDL.ShowFPS", val);
-}
+// 	g_config->setOption("SDL.ShowFPS", val);
+// }
 
-static void show_mouse_update(unsigned long key) {
-	int val;
+// static void show_mouse_update(unsigned long key) {
+// 	int val;
 
-	if (key == DINGOO_RIGHT)
-		val = 1;
-	if (key == DINGOO_LEFT)
-		val = 0;
+// 	if (key == DINGOO_RIGHT)
+// 		val = 1;
+// 	if (key == DINGOO_LEFT)
+// 		val = 0;
 
-	g_config->setOption("SDL.ShowMouseCursor", val);
-}
+// 	g_config->setOption("SDL.ShowMouseCursor", val);
+// }
 
-static void mouse_update(unsigned long key) {
-	int val;
-	g_config->getOption("SDL.MouseSpeed", &val);
+// static void mouse_update(unsigned long key) {
+// 	int val;
+// 	g_config->getOption("SDL.MouseSpeed", &val);
 
-	if (key == DINGOO_RIGHT)
-		val = val < 8 ? val + 1 : 8;
-	if (key == DINGOO_LEFT)
-		val = val > 0 ? val - 1 : 0;
+// 	if (key == DINGOO_RIGHT)
+// 		val = val < 8 ? val + 1 : 8;
+// 	if (key == DINGOO_LEFT)
+// 		val = val > 0 ? val - 1 : 0;
 
-	g_config->setOption("SDL.MouseSpeed", val);
-}
+// 	g_config->setOption("SDL.MouseSpeed", val);
+// }
 
 // Frameskip
 #if 0 //def FRAMESKIP
@@ -97,40 +97,40 @@ static void frameskip_update(unsigned long key) {
 #endif
 
 // Custom palette
-static void custom_update(unsigned long key) {
-	const char *types[] = { ".pal", NULL };
-	char palname[128] = "";
+// static void custom_update(unsigned long key) {
+// 	const char *types[] = { ".pal", NULL };
+// 	char palname[128] = "";
 
-	#ifdef WIN32
-	if (!RunFileBrowser("d:\\", palname, types, "Choose nes palette (.pal)")) 
-	#else
-	if (!RunFileBrowser(NULL, palname, types, "Choose nes palette (.pal)")) 
-	#endif
-	{
-		CloseGame();
-		SDL_Quit();
-		exit(-1);
-	}
+// 	#ifdef WIN32
+// 	if (!RunFileBrowser("d:\\", palname, types, "Choose nes palette (.pal)")) 
+// 	#else
+// 	if (!RunFileBrowser(NULL, palname, types, "Choose nes palette (.pal)")) 
+// 	#endif
+// 	{
+// 		CloseGame();
+// 		SDL_Quit();
+// 		exit(-1);
+// 	}
 
-	std::string cpalette = std::string(palname);
-	g_config->setOption("SDL.Palette", cpalette);
-}
+// 	std::string cpalette = std::string(palname);
+// 	g_config->setOption("SDL.Palette", cpalette);
+// }
 
 /* MAIN SETTINGS MENU */
 
 static SettingEntry
 	st_menu[] = {
-		{ "PAL", "Use PAL timing", "SDL.PAL", pal_update },
 		{ "Game Genie", "Emulate Game Genie", "SDL.GameGenie", gg_update },
-		{ "No sprite limit", "Disable sprite limit", "SDL.DisableSpriteLimit", sprite_limit_update },
-		{ "FPS Throttle", "Use fps throttling", "SDL.FPSThrottle", throttle_update },
-		{ "Show FPS", "Show frames per second", "SDL.ShowFPS", showfps_update },
-		{ "Show mouse", "Show/hide mouse cursor", "SDL.ShowMouseCursor", show_mouse_update },
-		{ "Mouse speed", "Mouse cursor speed", "SDL.MouseSpeed", mouse_update },
+		// { "Show FPS", "Show frames per second", "SDL.ShowFPS", showfps_update },
+		// { "FPS Throttle", "Use FPS throttling", "SDL.FPSThrottle", throttle_update },
+		// { "PAL", "Use PAL timing", "SDL.PAL", pal_update },
+		// { "No sprite limit", "Disable sprite limit", "SDL.DisableSpriteLimit", sprite_limit_update },
+		// { "Show mouse", "Show/hide mouse cursor", "SDL.ShowMouseCursor", show_mouse_update },
+		// { "Mouse speed", "Mouse cursor speed", "SDL.MouseSpeed", mouse_update },
 #if 0 //def FRAMESKIP
 		{ "Frameskip", "Frameskip [0-9]", "SDL.Frameskip", frameskip_update},
 #endif
-		{ "Custom palette", "Load custom palette", "SDL.Palette", custom_update },
+		// { "Custom palette", "Load custom palette", "SDL.Palette", custom_update },
 };
 
 int RunMainSettings() {
@@ -138,13 +138,14 @@ int RunMainSettings() {
 	static int spy = 72;
 	int done = 0, y, i;
 
-	int max_entries = 8;
-#if 0 //def FRAMESKIP
-	int menu_size = 9;
-#else
-	int menu_size = 8;
-#endif
+// #if 0 //def FRAMESKIP
+// 	int menu_size = 9;
+// #else
+// 	int menu_size = 8;
+// #endif
 
+	static const int menu_size = sizeof(st_menu) / sizeof(st_menu[0]);
+	static const int max_entries = 8;
 	static int offset_start = 0;
 	static int offset_end = menu_size > max_entries ? max_entries : menu_size;
 

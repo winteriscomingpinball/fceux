@@ -249,9 +249,9 @@ int RunSoundSettings() {
 
 			// Draw offset marks
 			if (offset_start > 0)
-				DrawChar(gui_screen, SP_UPARROW, 218, 57);
+				DrawChar(gui_screen, SP_UPARROW, 157, 57);
 			if (offset_end < menu_size)
-				DrawChar(gui_screen, SP_DOWNARROW, 218, 197);
+				DrawChar(gui_screen, SP_DOWNARROW, 157, 197);
 
 			g_dirty = 0;
 		}

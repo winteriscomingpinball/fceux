@@ -29,7 +29,7 @@ static SDL_Surface *g_bg;
 static uint16 *g_psdl;
 static uint8 g_preview[256 * 256 + 8];
 static uint8 g_ispreview;
-static char g_romname[32] = "";
+static char g_romname[48] = "";
 static int g_dirty = 1;
 int g_slot = 0; // make it accessible from input.cpp
 static int g_romtype;
@@ -210,9 +210,10 @@ static int load_rom() {
 	#else
 	if (!RunFileBrowser(NULL, filename, types)) {
 	#endif
-		CloseGame();
-		SDL_Quit();
-		exit(-1);
+		return 0;
+		// CloseGame();
+		// SDL_Quit();
+		// exit(-1);
 	}
 
 	//  TODO - Must close game here?
@@ -284,11 +285,11 @@ static MenuEntry main_menu[] = {
 		{ "Settings", "Change current settings", cmd_settings_menu },
 		{ "Exit", "Exit emulator", cmd_exit } 
 };
-#ifdef NO_ROM_BROWSER
-	int main_menu_items = 6;
-#else NO_ROM_BROWSER
-	int main_menu_items = 7;
-#endif
+// #ifdef NO_ROM_BROWSER
+// 	int main_menu_items = 6;
+// #else NO_ROM_BROWSER
+// 	int main_menu_items = 7;
+// #endif
 
 
 extern char FileBase[2048];
@@ -307,8 +308,10 @@ int FCEUGUI_Init(FCEUGI *gi)
 		return -2;
 
 	if (gi) {
-		if (strlen(FileBase) > 28) {
-			strncpy(g_romname, FileBase, 24);
+		// if (strlen(FileBase) > 28) {
+			// strncpy(g_romname, FileBase, 24);
+		if (strlen(FileBase) > 36) {
+			strncpy(g_romname, FileBase, 34);
 			strcat(g_romname, "...");
 		} else
 			strcpy(g_romname, FileBase);
@@ -321,8 +324,10 @@ int FCEUGUI_Init(FCEUGI *gi)
 void FCEUGUI_Reset(FCEUGI *gi) {
 	g_psdl = FCEUD_GetPaletteArray16();
 
-	if (strlen(FileBase) > 28) {
-		strncpy(g_romname, FileBase, 24);
+	// if (strlen(FileBase) > 28) {
+		// strncpy(g_romname, FileBase, 24);
+	if (strlen(FileBase) > 36) {
+		strncpy(g_romname, FileBase, 34);
 		strcat(g_romname, "...");
 	} else
 		strcpy(g_romname, FileBase);
@@ -343,6 +348,14 @@ void FCEUGUI_Run() {
 	static int spy = 72;
 	int done = 0, y, i;
 
+	static int main_menu_items = sizeof(main_menu) / sizeof(main_menu[0]);
+
+	if (g_romtype != GIT_FDS) { // Remove "Flip disc" if not a FDS
+		for (i = 3; i < main_menu_items - 1; i++)
+			main_menu[i] = main_menu[i+1];
+		main_menu_items--;
+	}
+
 	load_preview();
 
 	g_dirty = 1;
@@ -358,13 +371,13 @@ void FCEUGUI_Run() {
 				index--;
 				spy -= 16;
 			} else {
-				index = main_menu_items;
+				index = main_menu_items - 1;
 				spy = 72 + 16*index;
 			}
 		}
 
 		if (parsekey(DINGOO_DOWN, 0)) {
-			if (index < main_menu_items) {
+			if (index < main_menu_items - 1) {
 				index++;
 				spy += 16;
 			} else {
@@ -413,13 +426,19 @@ void FCEUGUI_Run() {
 			DrawChar(gui_screen, SP_SELECTOR, 56, spy);
 			DrawChar(gui_screen, SP_SELECTOR, 77, spy);
 
-			DrawText(gui_screen, "Now Playing:", 8, 37);
-			DrawText(gui_screen, g_romname, 96, 37);
+			// DrawText(gui_screen, "Now Playing:", 8, 37);
+			// DrawText(gui_screen, g_romname, 96, 37);
+			DrawText(gui_screen, g_romname, 8, 37);
 
 			// Draw menu
-			for (i = 0, y = 72; i <= main_menu_items; i++, y += 16) {
+			for (i = 0, y = 72; i < main_menu_items; i++) {
+				// if (g_romtype != GIT_FDS && !strcmp(main_menu[i].name, "Flip disc")) continue;
+
 				DrawText(gui_screen, main_menu[i].name, 60, y);
+				y += 16;
 			}
+
+			// if (g_romtype != GIT_FDS && !strcmp(main_menu[index].name, "Flip disc")) index++;
 
 			// Draw info
 			DrawText(gui_screen, main_menu[index].info, 8, 225);
