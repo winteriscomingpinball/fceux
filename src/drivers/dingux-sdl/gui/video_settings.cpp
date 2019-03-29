@@ -65,7 +65,7 @@ static void custom_update(unsigned long key) {
 	#ifdef WIN32
 	if (!RunFileBrowser("d:\\", palname, types, "Choose nes palette (.pal)")) 
 	#else
-	if (!RunFileBrowser(NULL, palname, types, "Choose nes palette (.pal)")) 
+	if (!RunFileBrowser("./palettes", palname, types, "Choose nes palette (.pal)")) 
 	#endif
 	{
 		return;
