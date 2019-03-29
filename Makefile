@@ -264,8 +264,8 @@ $(TARGET): $(OBJS)
 	$(CXX) $(LDFLAGS) $(OBJS) $(LIBS) -o fceux/$@
 
 ipk: $(TARGET)
-	@rm -rf /tmp/.fceux-ipk/ && mkdir -p /tmp/.fceux-ipk/root/home/retrofw/emus/fceux /tmp/.fceux-ipk/root/home/retrofw/apps/gmenu2x/sections/emulators /tmp/.fceux-ipk/root/home/retrofw/apps/gmenu2x/sections/emulators.systems
-	@cp fceux/backdrop.png fceux/fceux.dge fceux/fceux.man.txt fceux/fceux.png fceux/sp.bmp /tmp/.fceux-ipk/root/home/retrofw/emus/fceux
+	@rm -rf /tmp/.fceux-ipk/ && mkdir -p /tmp/.fceux-ipk/root/home/retrofw/emus/fceux/palettes /tmp/.fceux-ipk/root/home/retrofw/apps/gmenu2x/sections/emulators /tmp/.fceux-ipk/root/home/retrofw/apps/gmenu2x/sections/emulators.systems
+	@cp -r fceux/palettes fceux/backdrop.png fceux/fceux.dge fceux/fceux.man.txt fceux/fceux.png fceux/sp.bmp /tmp/.fceux-ipk/root/home/retrofw/emus/fceux
 	@cp fceux/fceux.lnk /tmp/.fceux-ipk/root/home/retrofw/apps/gmenu2x/sections/emulators
 	@cp fceux/nes.fceux.lnk /tmp/.fceux-ipk/root/home/retrofw/apps/gmenu2x/sections/emulators.systems
 	@sed "s/^Version:.*/Version: $$(date +%Y%m%d)/" fceux/control > /tmp/.fceux-ipk/control
