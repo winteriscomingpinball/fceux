@@ -147,7 +147,7 @@ static int _keyonly(int a)
     if(g_keyState[a])
     #endif
     {
-	
+
         if(!keyonce[a]) {
             keyonce[a] = 1;
             return(1);
@@ -237,7 +237,7 @@ void FCEUD_LoadStateFrom() {
 /**
 * Hook for transformer board
 */
-unsigned int *GetKeyboard(void)                                                     
+unsigned int *GetKeyboard(void)
 {
   int size = 256;
   Uint8* keystate = SDL_GetKeyState(&size);
@@ -251,8 +251,8 @@ static void KeyboardCommands() {
     int is_shift, is_alt;
 
     // get the keyboard input
-    #if SDL_VERSION_ATLEAST(1, 3, 0)	 
-    g_keyState = SDL_GetKeyboardState(NULL);	 
+    #if SDL_VERSION_ATLEAST(1, 3, 0)
+    g_keyState = SDL_GetKeyboardState(NULL);
     #else
     g_keyState = SDL_GetKeyState(NULL);
 	#endif
@@ -333,8 +333,9 @@ static void KeyboardCommands() {
 		}
 		if(_keyonly(DINGOO_X)) { // R + X  toggle fullscreen
 			extern int s_fullscreen; // from dingoo_video.cpp
-			s_fullscreen = (s_fullscreen + 1) % 4;
+			s_fullscreen = (s_fullscreen + 1) % 5;
 			g_config->setOption("SDL.Fullscreen", s_fullscreen);
+			FCEUD_DriverReset();
 			dingoo_clear_video();
 			resetkey(DINGOO_X);
 		}
@@ -558,7 +559,7 @@ static void KeyboardCommands() {
 		if (_keyonly(Hotkeys[HK_INCREASE_SPEED]))
 			FCEUI_NTSCINC();
 
-		/* NOT SUPPORTED 
+		/* NOT SUPPORTED
 		 if((InputType[2] == SIFC_BWORLD) || (cspec == SIS_DATACH)) {
 		 if(keyonly(F8)) {
 		 barcoder ^= 1;
@@ -1424,18 +1425,18 @@ void UpdateInput(Config *config) {
 }
 // Definitions from main.h:
 // GamePad defaults
-const char *GamePadNames[GAMEPAD_NUM_BUTTONS] = 
-{ 
+const char *GamePadNames[GAMEPAD_NUM_BUTTONS] =
+{
 	"A", "B", "Select", "Start", "Up", "Down", "Left", "Right", "TurboA", "TurboB"
 };
 
-const char *DefaultGamePadDevice[GAMEPAD_NUM_DEVICES] = 
+const char *DefaultGamePadDevice[GAMEPAD_NUM_DEVICES] =
 {
 	"Keyboard", "None", "None", "None"
 };
 
-const int DefaultGamePad[GAMEPAD_NUM_DEVICES][GAMEPAD_NUM_BUTTONS] = 
-{ 
+const int DefaultGamePad[GAMEPAD_NUM_DEVICES][GAMEPAD_NUM_BUTTONS] =
+{
 	{  SDLK_LCTRL, SDLK_LALT, SDLK_ESCAPE, SDLK_RETURN, SDLK_UP, SDLK_DOWN, SDLK_LEFT, SDLK_RIGHT, SDLK_SPACE, SDLK_LSHIFT },
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
