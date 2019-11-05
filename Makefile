@@ -1,7 +1,14 @@
+#
+# FCEUX for the RetroFW
+#
+# by pingflood; 2019
+#
+
+TARGET = fceux/fceux.dge
+
 TOOLCHAIN=
 BINDIR=
 
-# CHAINPREFIX := /opt/rs97-toolchain-musl
 CHAINPREFIX := /opt/mipsel-linux-uclibc
 CROSS_COMPILE := $(CHAINPREFIX)/usr/bin/mipsel-linux-
 
@@ -21,7 +28,7 @@ CORE_OBJS = \
 	$(SRC)filter.o $(SRC)ines.o $(SRC)input.o $(SRC)debug.o $(SRC)wave.o \
 	$(SRC)nsf.o $(SRC)palette.o $(SRC)ppu.o $(SRC)sound.o $(SRC)state.o $(SRC)unif.o \
  	$(SRC)video.o $(SRC)vsuni.o $(SRC)x6502.o $(SRC)netplay.o $(SRC)emufile.o
-    
+
 BOARDS_OBJS = \
 	$(SRC)boards/01-222.o \
 	$(SRC)boards/3d-block.o \
@@ -193,7 +200,7 @@ INPUT_OBJS = $(SRC)input/arkanoid.o $(SRC)input/bworld.o $(SRC)input/cursor.o \
 	$(SRC)input/powerpad.o $(SRC)input/quiz.o $(SRC)input/shadow.o $(SRC)input/snesmouse.o \
 	$(SRC)input/suborkb.o $(SRC)input/toprider.o $(SRC)input/zapper.o
 
-MAPPERS_OBJS = 
+MAPPERS_OBJS =
 
 UTILS_OBJS = $(SRC)utils/crc32.o $(SRC)utils/endian.o $(SRC)utils/general.o \
 	$(SRC)utils/guid.o $(SRC)utils/md5.o $(SRC)utils/memory.o $(SRC)utils/unzip.o \
@@ -249,10 +256,7 @@ LDFLAGS  += -static-libgcc -static-libstdc++
 endif
 LDFLAGS += -fprofile-generate -fprofile-dir=/home/retrofw/profile/fceux -fno-strict-aliasing
 
-
 LIBS = -L$(LIBDIR) `sdl-config --libs` -lz -lm
-
-TARGET = fceux.dge
 
 all: $(TARGET)
 
@@ -260,8 +264,8 @@ $(TARGET): $(OBJS)
 	@mkdir -p fceux/
 	# @cp src/drivers/dingux-sdl/gui/*.bmp fceux/
 	@echo Linking $@...
-	@echo $(CXX) $(LDFLAGS) $(OBJS) -o fceux/$@
-	$(CXX) $(LDFLAGS) $(OBJS) $(LIBS) -o fceux/$@
+	@echo $(CXX) $(LDFLAGS) $(OBJS) -o $@
+	$(CXX) $(LDFLAGS) $(OBJS) $(LIBS) -o $@
 
 ipk: $(TARGET)
 	@rm -rf /tmp/.fceux-ipk/ && mkdir -p /tmp/.fceux-ipk/root/home/retrofw/emus/fceux/palettes /tmp/.fceux-ipk/root/home/retrofw/apps/gmenu2x/sections/emulators /tmp/.fceux-ipk/root/home/retrofw/apps/gmenu2x/sections/emulators.systems
@@ -293,7 +297,19 @@ ipk: $(TARGET)
 	@echo Assembling $<...
 	$(CXX) $(CDEFS) $(CXXFLAGS) -c $< -o $@
 
+opk: $(TARGET)
+	@mksquashfs \
+	fceux/default.retrofw.desktop \
+	fceux/nes.retrofw.desktop \
+	fceux/palettes \
+	fceux/fceux.dge \
+	fceux/fceux.man.txt \
+	fceux/fceux.png \
+	fceux/backdrop.png \
+	fceux/sp.bmp \
+	fceux/fceux.opk \
+	-all-root -noappend -no-exports -no-xattrs
+
 clean:
-	rm -f $(OBJS) fceux/$(TARGET) fceux/fceux.ipk
+	rm -f $(OBJS) $(TARGET) fceux/fceux.ipk
 	rm -rf /tmp/.fceux-ipk/
-	
