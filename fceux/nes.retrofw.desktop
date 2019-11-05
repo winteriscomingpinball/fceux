@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=NES/FC
+Comment=FCEUX Emulator
+Exec=fceux.dge
+Icon=fceux
+Categories=emulators.systems;
+X-OD-Manual=fceux.man.txt
+X-OD-Selector=/home/retrofw/roms/nes
+X-OD-Filter=.zip,.nes,.fds
+Terminal=false
+Type=Application
+StartupNotify=true
