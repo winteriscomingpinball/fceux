@@ -149,7 +149,7 @@ Config * InitConfig() {
 	// video controls
 	config->addOption('x', "xres", "SDL.XResolution", 320);
 	config->addOption('y', "yres", "SDL.YResolution", 240);
-	config->addOption('f', "fullscreen", "SDL.Fullscreen", 0);
+	config->addOption('f', "fullscreen", "SDL.Fullscreen", 1);
 	config->addOption('b', "bpp", "SDL.BitsPerPixel", 8);
 	config->addOption("doublebuf", "SDL.DoubleBuffering", 0);
 	config->addOption("autoscale", "SDL.AutoScale", 1);

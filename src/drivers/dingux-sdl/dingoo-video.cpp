@@ -161,7 +161,7 @@ int InitVideo(FCEUGI *gi) {
 	if (!s_VideoModeSet) {
 		int w, h;
 		if (s_fullscreen == 1) {
-			w = 256; h = PAL ? 240 : 224;
+			w = 256; h = 240;//PAL ? 240 : 224;
 		} else {
 			w = 320; h = 240;
 		}
@@ -378,24 +378,13 @@ void BlitScreen(uint8 *XBuf) {
 			break;
 	    default: // native res
 		{
-			//int pinc = (320 - NWIDTH) >> 1;
 			int32 pinc = (screen->w - NWIDTH) >> 1;
 			int32 append = 256 - NWIDTH;
-
-			//SDL_Rect dstrect;
-
-			// center windows
-			//dstrect.x = (screen->w - 256) / 2;
-			//dstrect.y = (screen->h - 224) / 2;
-
-			// doesn't work in rzx-50 dingux
-			//SDL_BlitSurface(nes_screen, 0, screen, &dstrect);
 
 			register uint32 *dest = (uint32 *) screen->pixels;
 
 			// XXX soules - not entirely sure why this is being done yet
 			pBuf += (s_srendline * 256) + NOFFSET;
-			//dest += (s_srendline * 320) + pinc >> 1;
 			dest += (screen->w/2 * s_srendline) + pinc / 2 + ((screen->h - 240) / 4) * screen->w;
 
 			for (y = s_tlines; y; y--, pBuf += append) {
@@ -411,9 +400,6 @@ void BlitScreen(uint8 *XBuf) {
 			}
 		}
 	}
-	// uint32_t *s = (uint32_t*)screen->pixels;
-	// uint32_t *d = (uint32_t*)RS97screen->pixels;
-	// for(uint8_t y = 0; y < 239; y++, s += 160, d += 320) memmove(d, s, 1280); // double-line fix by pingflood, 2018
 	if (SDL_MUSTLOCK(screen)) SDL_UnlockSurface(screen);
 	SDL_Flip(screen);
 }
