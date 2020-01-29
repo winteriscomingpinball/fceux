@@ -29,9 +29,9 @@ typedef struct {
         int bogo;
         int zappo;
         uint64 zaphit;
-} ZAPPER;
+} ZAPPER_SH;
 
-static ZAPPER ZD;
+static ZAPPER_SH ZD;
 
 static void ZapperFrapper(uint8 *bg, uint8 *spr, uint32  linets, int final)
 {
@@ -143,7 +143,7 @@ static INPUTCFC SHADOWC={ReadZapper,0,StrobeShadow,UpdateZapper,ZapperFrapper,Dr
 
 INPUTCFC *FCEU_InitSpaceShadow(void)
 {
-  memset(&ZD,0,sizeof(ZAPPER));
+  memset(&ZD,0,sizeof(ZAPPER_SH));
   return(&SHADOWC);
 }
 
