@@ -220,7 +220,7 @@ INCLUDEDIR=$(CHAINPREFIX)/include
 CFLAGS = -I$(INCLUDEDIR) -I$(SRC)
 CXXFLAGS = -I$(INCLUDEDIR)
 
-LDFLAGS = -s $(SDL_LIBS)
+LDFLAGS = -s $(SDL_LIBS) -lSDL_image
 
 W_OPTS	= -Wno-write-strings -Wno-sign-compare
 
