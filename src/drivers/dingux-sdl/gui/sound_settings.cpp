@@ -141,7 +141,7 @@ static void pcm_update(unsigned long key) {
 static SettingEntry sd_menu[] = {
 	{ "Toggle sound", "Enable sound", "SDL.Sound", sound_update },
 	{ "Sound rate",	"Sound playback rate (Hz)", "SDL.Sound.Rate", soundrate_update },
-	{ "Quality", "Sound quality", "SDL.Sound.Quality", soundhq_update},
+	// { "Quality", "Sound quality", "SDL.Sound.Quality", soundhq_update},
 	{ "Lowpass", "Enables low-pass filter",	"SDL.Sound.LowPass", lowpass_update },
 	{ "Volume", "Sets global volume", "SDL.Sound.Volume", volume_update },
 	{ "Triangle volume", "Sets Triangle volume", "SDL.Sound.TriangleVolume", triangle_update },
