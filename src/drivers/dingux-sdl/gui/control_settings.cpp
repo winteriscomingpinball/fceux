@@ -1,7 +1,13 @@
 // Externals
 extern Config *g_config;
 
-#define CONTROL_MENUSIZE 7
+// Fullscreen mode
+static char *menu_button[] = {
+	"Pwr/Sel+Strt",
+	"Power",
+	"Select+Start"
+};
+
 
 /* MENU COMMANDS */
 
@@ -108,8 +114,23 @@ static void resetMappings(unsigned long key)
 	g_config->setOption("SDL.Input.GamePad.0TurboB", DefaultGamePad[0][8]);
 	g_config->setOption("SDL.MergeControls", 0);
 	g_config->setOption("SDL.AutoFireFPS", 30);
+	g_config->setOption("SDL.InputMenu", 0);
 	UpdateInput(g_config);
 }
+
+static void InputMenu(unsigned long key)
+{
+	int val;
+	g_config->getOption("SDL.InputMenu", &val);
+
+	if (key == DINGOO_RIGHT) val = val < 2 ? val + 1 : 2;
+	if (key == DINGOO_LEFT) val = val > 0 ? val - 1 : 0;
+   
+	g_config->setOption("SDL.InputMenu", val);
+	UpdateInput(g_config);
+}
+
+
 /* CONTROL SETTING MENU */
 
 static SettingEntry cm_menu[] = 
@@ -120,8 +141,12 @@ static SettingEntry cm_menu[] =
 	{"Turbo A", "Map input for Turbo A", "SDL.Input.GamePad.0TurboA", setTurboA},
 	{"Turbo Speed", "Control speed of auto fire", "SDL.AutoFireFPS", setAutoFireFPS},
 	{"Merge P1/P2", "Control both players at once", "SDL.MergeControls", MergeControls},
+	{"Menu", "Input to open the menu", "SDL.InputMenu", InputMenu},
 	{"Reset defaults", "Reset default control mappings", "", resetMappings},
 };
+
+static int CONTROL_MENUSIZE = 8;
+
 
 int RunControlSettings()
 {
@@ -193,17 +218,12 @@ int RunControlSettings()
 				}
 			}
 
-	   		if (parsekey(DINGOO_LEFT, 1)) {
-				if (index == 4 || index == 5) {
+	   		if ((parsekey(DINGOO_LEFT, 1) || parsekey(DINGOO_RIGHT, 1)) &&
+				(index == 4 || index == 5 || index == 6)
+	   			) {
 					cm_menu[index].update(g_key);
 				}
-			}
 
-	   		if (parsekey(DINGOO_RIGHT, 1)) {
-				if (index == 4 || index == 5) {
-					cm_menu[index].update(g_key);
-				}
-			}
 		} else { //		if ( editMode ) {
 			if (parsekey(DINGOO_A, 0) || parsekey(DINGOO_B, 0) || parsekey(DINGOO_X, 0) || parsekey(DINGOO_Y, 0)) {
 				cm_menu[index].update(g_key);
@@ -244,15 +264,15 @@ int RunControlSettings()
 				
 				g_config->getOption(cm_menu[i].option, &iBtnVal);
 				
-				if (i == CONTROL_MENUSIZE-1)
+				if (!strcmp(cm_menu[i].name, "Reset defaults"))
 					sprintf(cBtn, "%s", "");
-				else if (i == CONTROL_MENUSIZE-2)
+				else if (!strcmp(cm_menu[i].name, "Merge P1/P2"))
 				{
 					int mergeValue;
 					g_config->getOption("SDL.MergeControls", &mergeValue);
 					sprintf(cBtn, "%s", mergeValue ? "on" : "off");
 				}
-				else if(i == CONTROL_MENUSIZE-3)
+				else if(!strcmp(cm_menu[i].name, "Turbo Speed"))
                 {
 					int autoFireFPS;
 					g_config->getOption("SDL.AutoFireFPS", &autoFireFPS);
@@ -260,6 +280,11 @@ int RunControlSettings()
                         autoFireFPS = 30;
                     }
 					sprintf(cBtn, "%dfps", autoFireFPS);
+                }
+				else if(!strcmp(cm_menu[i].name, "Menu"))
+                {
+					g_config->getOption("SDL.InputMenu", &iBtnVal);
+					sprintf(cBtn, "%s", menu_button[iBtnVal]);
                 }
 				else if (iBtnVal == DefaultGamePad[0][0]) sprintf(cBtn, "%s", "A");
 				else if (iBtnVal == DefaultGamePad[0][1]) sprintf(cBtn, "%s", "B");
