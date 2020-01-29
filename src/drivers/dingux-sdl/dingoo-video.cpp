@@ -160,7 +160,7 @@ int InitVideo(FCEUGI *gi) {
 	if (!s_VideoModeSet) {
 		int w, h;
 		if (s_fullscreen == 1) {
-			w = 256; h = PAL ? 240 : 224;
+			w = 256; h = 240;//PAL ? 240 : 224;
 		} else {
 			w = 320; h = 240;
 		}
