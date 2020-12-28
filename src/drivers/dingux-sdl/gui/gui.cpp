@@ -362,8 +362,8 @@ void FCEUGUI_Run() {
 
 		// Parse input
 		readkey();
-		/*if (parsekey(DINGOO_B))
-			done = 1;*/
+		if (parsekey(DINGOO_B))
+			done = 1;
 
 		if (parsekey(DINGOO_UP, 0)) {
 			if (index > 0) {

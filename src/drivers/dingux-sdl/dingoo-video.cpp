@@ -173,7 +173,11 @@ int InitVideo(FCEUGI *gi) {
 	}
 	else
 	{
+		#ifdef OPENDINGUX_BUG
+		screen = SDL_SetVideoMode(256, 224 + (PAL*16), 16, SDL_HWSURFACE | SDL_TRIPLEBUF);
+		#else
 		screen = SDL_SetVideoMode(256, 224 + (PAL*16), 32, SDL_HWSURFACE | SDL_TRIPLEBUF);
+		#endif
 	}
 
 	// a hack to bind inner buffer to nes_screen surface
@@ -339,12 +343,21 @@ void BlitScreen(uint8 *XBuf) {
 	else clip_ppu = 0;
 	
 	height = 224 + (PAL*16);
+	#ifdef OPENDINGUX_BUG
+	width = 256;
+	clip_ppu = 0;
+	#else
 	width = (256 - clip_ppu) - (s_clipSides ? 8 : 0);
+	#endif
 	
 	if (screen->w != width || screen->h != height || forceRefresh)
 	{
 		if (screen) SDL_FreeSurface(screen);
+		#ifdef OPENDINGUX_BUG
+		screen = SDL_SetVideoMode(width, height, 16, SDL_HWSURFACE | SDL_TRIPLEBUF);
+		#else
 		screen = SDL_SetVideoMode(width, height, 32, SDL_HWSURFACE | SDL_TRIPLEBUF);
+		#endif
 		forceRefresh = 0;
 		for(i=0;i<3;i++)
 		{

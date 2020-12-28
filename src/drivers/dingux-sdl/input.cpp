@@ -676,6 +676,14 @@ static void UpdatePhysicalInput()
 	            MenuRequested = true;
 			}
             break;
+        case SDL_KEYUP:
+				switch(event.key.keysym.sym)
+				{
+					case SDLK_HOME:
+						MenuRequested = true;
+					break;
+				}
+        break;
         default:
             // do nothing
             break;

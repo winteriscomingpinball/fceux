@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=FCEUX
+Comment=NES/FC Emulator
+Exec=fceux.elf %f
+Icon=fceux
+Categories=emulators;
+X-OD-Manual=fceux.man.txt
+X-OD-Filter=.zip,.nes,.fds
+Terminal=false
+Type=Application
+StartupNotify=true
