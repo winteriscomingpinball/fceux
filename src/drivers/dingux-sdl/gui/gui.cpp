@@ -12,6 +12,10 @@
 
 #include "font.h"
 
+#ifndef SDL_TRIPLEBUF
+#define SDL_TRIPLEBUF SDL_DOUBLEBUF
+#endif
+
 // ...
 extern SDL_Surface* screen;
 extern int RunFileBrowser(char *source, char *romname, const char *types[],
@@ -287,8 +291,7 @@ int FCEUGUI_Init(FCEUGI *gi)
 	if(!gui_screen) printf("Error creating surface gui\n");
 
 	// Load bg image
-	// g_bg = SDL_LoadBMP("./bg.bmp");
-	g_bg = IMG_Load("./backdrop.png");
+	g_bg = SDL_LoadBMP("./bg.bmp");
 
 	if (InitFont() < 0)
 		return -2;
@@ -337,24 +340,30 @@ void FCEUGUI_Kill() {
 	KillFont();
 }
 
+uint8_t menu = 0;
+
 extern void InitGuiVideo();
 
 void FCEUGUI_Run() {
+	extern uint8_t forceRefresh;
 	static int index = 0;
 	static int spy = 72;
 	int done = 0, y, i;
+	
+	screen = SDL_SetVideoMode(320, 160, 16, SDL_HWSURFACE | SDL_TRIPLEBUF);
 
     InitGuiVideo();
 
 	load_preview();
 
+	menu = 1;
 	g_dirty = 1;
 	while (!done) {
 
 		// Parse input
 		readkey();
-		if (parsekey(DINGOO_B))
-			done = 1;
+		/*if (parsekey(DINGOO_B))
+			done = 1;*/
 
 		if (parsekey(DINGOO_UP, 0)) {
 			if (index > 0) {
@@ -456,7 +465,7 @@ void FCEUGUI_Run() {
 			g_dirty = 0;
 		}
 
-		SDL_Delay(16);
+		SDL_Delay(32);
 
 		// Update real screen
 		FCEUGUI_Flip();
@@ -473,4 +482,7 @@ void FCEUGUI_Run() {
 
 	g_key = 0;
 	counter = 0;
+	
+	forceRefresh = 1;
+	menu = 0;
 }

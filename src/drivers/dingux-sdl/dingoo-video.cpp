@@ -39,6 +39,10 @@
 
 #include "../common/configSys.h"
 
+#ifndef SDL_TRIPLEBUF
+#define SDL_TRIPLEBUF SDL_DOUBLEBUF
+#endif
+
 // GLOBALS
 SDL_Surface *screen;
 SDL_Surface *nes_screen; // 256x224
@@ -124,6 +128,10 @@ void FCEUD_VideoChanged() {
 	else
 		PAL = 0;
 }
+
+
+extern uint8_t menu;
+
 /**
  * Attempts to initialize the graphical video display.  Returns 0 on
  * success, -1 on failure.
@@ -156,19 +164,16 @@ int InitVideo(FCEUGI *gi) {
 			fprintf(stderr,"%s",SDL_GetError());
 		}
 
-	// initialize dingoo video mode
-	if (!s_VideoModeSet) {
-		int w, h;
-		if (s_fullscreen == 1) {
-			w = 256; h = 240;//PAL ? 240 : 224;
-		} else {
-			w = 320; h = 240;
-		}
-		if(SDL_VideoModeOK(w, h, 16, SDL_HWSURFACE | DINGOO_MULTIBUF) != 0)
+	if (menu)
+	{
+		if (screen->w != 320)
 		{
-			screen = SDL_SetVideoMode(w, h, 16, SDL_HWSURFACE | DINGOO_MULTIBUF);
-			s_VideoModeSet = true;
+			screen = SDL_SetVideoMode(320, 240, 16, SDL_HWSURFACE | SDL_TRIPLEBUF);
 		}
+	}
+	else
+	{
+		screen = SDL_SetVideoMode(256, 224 + (PAL*16), 32, SDL_HWSURFACE | SDL_TRIPLEBUF);
 	}
 
 	// a hack to bind inner buffer to nes_screen surface
@@ -189,10 +194,7 @@ int InitVideo(FCEUGI *gi) {
 
 void InitGuiVideo() {
 	if (screen->w == 320 && screen->h == 240) return;
-	if(SDL_VideoModeOK(320, 240, 16, SDL_HWSURFACE | DINGOO_MULTIBUF) != 0)
-	{
-		screen = SDL_SetVideoMode(320, 240, 16, SDL_HWSURFACE | DINGOO_MULTIBUF);
-	}
+	screen = SDL_SetVideoMode(320, 240, 16, SDL_HWSURFACE | DINGOO_MULTIBUF);
 }
 
 
@@ -292,12 +294,19 @@ void UnlockConsole() {
 
 #define READU16(x)  (uint16) ((uint16)(x)[0] | (uint16)(x)[1] << 8)
 
+uint8_t clip_ppu = 0;
+uint8_t forceRefresh = 0;
+uint16_t height;
+uint16_t width;
+
 /**
  * Pushes the given buffer of bits to the screen.
  */
 void BlitScreen(uint8 *XBuf) {
-	int x, x2, y, y2;
-
+	extern uint8_t PPU[4];
+	int x, x2, y, y2, i;
+	SDL_Rect rct_src;
+	
 	// Taken from fceugc
 	// FDS switch disk requested - need to eject, select, and insert
 	// but not all at once!
@@ -326,80 +335,30 @@ void BlitScreen(uint8 *XBuf) {
 		FDSTimer++;
 	}
 
-	// TODO - Move these to its own file?
-	if (SDL_MUSTLOCK(screen)) SDL_LockSurface(screen);
-
-	register uint8 *pBuf = XBuf;
-
-	switch (s_fullscreen) {
-	    case 4: // fullscreen smooth
-			if (s_clipSides) {
-				upscale_320x240_bilinearish_clip((uint32 *)screen->pixels, (uint8 *)XBuf + 256 * 8, 256);
-			} else {
-				upscale_320x240_bilinearish_noclip((uint32 *)screen->pixels, (uint8 *)XBuf + 256 * 8, 256);
-			}
-			break;
-	    case 3: // fullscreen
-			switch(screen->w) {
-				case 480: upscale_480x272((uint32 *)screen->pixels, (uint8 *)XBuf + 256 * 8); break;
-				case 400: upscale_384x240((uint32 *)screen->pixels, (uint8 *)XBuf + 256 * 8); break;
-				case 320: upscale_320x240((uint32 *)screen->pixels, (uint8 *)XBuf + 256 * 8); break;
-			}
-			break;
-	    case 2: // aspect fullscreen
-			switch(screen->w) {
-				case 480: upscale_384x272((uint32 *)screen->pixels, (uint8 *)XBuf + 256 * 8); break;
-				case 400:
-				case 320:
-					pBuf += (s_srendline * 256) + 8;
-					register uint16 *dest = (uint16 *) screen->pixels;
-					//dest += (320 * s_srendline) + 20;
-					dest += (screen->w * s_srendline) + (screen->w - 280) / 2 + ((screen->h - 240) / 2) * screen->w;
-
-					// semi fullscreen no blur
-					for (y = s_tlines; y; y--) {
-						for (x = 240; x; x -= 6) {
-							__builtin_prefetch(dest + 2, 1);
-							*dest++ = s_psdl[*pBuf];
-							*dest++ = s_psdl[*(pBuf + 1)];
-							*dest++ = s_psdl[*(pBuf + 2)];
-							*dest++ = s_psdl[*(pBuf + 3)];
-							*dest++ = s_psdl[*(pBuf + 3)];
-							*dest++ = s_psdl[*(pBuf + 4)];
-							*dest++ = s_psdl[*(pBuf + 5)];
-							pBuf += 6;
-						}
-						pBuf += 16;
-						//dest += 40;
-						dest += screen->w - 280;
-					}
-			}
-			break;
-	    default: // native res
+	if (!(PPU[1] & 2)) clip_ppu = 8;
+	else clip_ppu = 0;
+	
+	height = 224 + (PAL*16);
+	width = (256 - clip_ppu) - (s_clipSides ? 8 : 0);
+	
+	if (screen->w != width || screen->h != height || forceRefresh)
+	{
+		if (screen) SDL_FreeSurface(screen);
+		screen = SDL_SetVideoMode(width, height, 32, SDL_HWSURFACE | SDL_TRIPLEBUF);
+		forceRefresh = 0;
+		for(i=0;i<3;i++)
 		{
-			int32 pinc = (screen->w - NWIDTH) >> 1;
-			int32 append = 256 - NWIDTH;
-
-			register uint32 *dest = (uint32 *) screen->pixels;
-
-			// XXX soules - not entirely sure why this is being done yet
-			pBuf += (s_srendline * 256) + NOFFSET;
-			dest += (screen->w/2 * s_srendline) + pinc / 2 + ((screen->h - 240) / 4) * screen->w;
-
-			for (y = s_tlines; y; y--, pBuf += append) {
-				for (x = NWIDTH >> 3; x; x--) {
-					__builtin_prefetch(dest + 4, 1);
-					*dest++ = palettetranslate[*(uint16 *) pBuf];
-					*dest++ = palettetranslate[*(uint16 *) (pBuf + 2)];
-					*dest++ = palettetranslate[*(uint16 *) (pBuf + 4)];
-					*dest++ = palettetranslate[*(uint16 *) (pBuf + 6)];
-					pBuf += 8;
-				}
-				dest += pinc;
-			}
+			SDL_FillRect(screen, NULL, 0);
+			SDL_Flip(screen);
 		}
 	}
-	if (SDL_MUSTLOCK(screen)) SDL_UnlockSurface(screen);
+	
+	rct_src.x = clip_ppu;
+	rct_src.y = 0;
+	rct_src.w = width;
+	rct_src.h = height;
+	
+	SDL_BlitSurface(nes_screen, &rct_src, screen, NULL);
 	SDL_Flip(screen);
 }
 

@@ -173,6 +173,7 @@ static int resetkey(int sdlk_code)
 {
 	Uint8 *keystate = SDL_GetKeyState(NULL);
 	keystate[sdlk_code] = 0;
+	return 1;
 }
 
 static int g_fkbEnabled = 0;
@@ -667,7 +668,7 @@ static void UpdatePhysicalInput()
         case SDL_KEYDOWN:
 			if (
 				((inputmenu == 0 || inputmenu == 1) && event.key.keysym.sym == DINGOO_MENU)
-				|| ((inputmenu == 0 || inputmenu == 2) && (g_keyState[DINGOO_SELECT] && event.key.keysym.sym == DINGOO_START))
+				|| ((inputmenu == 0 || inputmenu == 2) && (g_keyState[SDLK_HOME]))
 			) {
 	            // Because a KEYUP is sent straight after the KEYDOWN for the
 	            // Power switch, SDL_GetKeyState will not ever see this.

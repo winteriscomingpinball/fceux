@@ -176,7 +176,7 @@ static void slend_update(unsigned long key)
 /* VIDEO SETTINGS MENU */
 static SettingEntry vd_menu[] =
 {
-	{ "Video scaling", "Select video scale mode", "SDL.Fullscreen", fullscreen_update },
+	//{ "Video scaling", "Select video scale mode", "SDL.Fullscreen", fullscreen_update },
 	{ "Show FPS", "Show frames per second", "SDL.ShowFPS", showfps_update },
 	{ "FPS Throttle", "Use FPS throttling", "SDL.FPSThrottle", throttle_update },
 	{ "Clip sides", "Clips left and right columns", "SDL.ClipSides", clip_update },

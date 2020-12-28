@@ -188,4 +188,6 @@ int RunSettingsMenu() {
 	dingoo_clear_video();
 
 	g_dirty = 1;
+
+	return 1;
 }
