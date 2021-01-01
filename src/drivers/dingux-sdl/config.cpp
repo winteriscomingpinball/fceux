@@ -124,7 +124,7 @@ Config * InitConfig() {
 	config->addOption("square2vol", "SDL.Sound.Square2Volume", 256);
 	config->addOption("noisevol", "SDL.Sound.NoiseVolume", 256);
 	config->addOption("pcmvol", "SDL.Sound.PCMVolume", 256);
-	config->addOption("soundrate", "SDL.Sound.Rate", 32000);
+	config->addOption("soundrate", "SDL.Sound.Rate", 48000);
 	config->addOption("soundq", "SDL.Sound.Quality", 0);
 	config->addOption("soundrecord", "SDL.Sound.RecordFile", "");
 	config->addOption("soundbufsize", "SDL.Sound.BufSize", 30);
@@ -245,10 +245,10 @@ Config * InitConfig() {
 
 	}
 	// make default mapping match snes layout. keep in sync with resetMappings() in control_settings.cpp;
-	config->setOption("SDL.Input.GamePad.0A", DefaultGamePad[0][1]);
-	config->setOption("SDL.Input.GamePad.0B", DefaultGamePad[0][9]);
-	config->setOption("SDL.Input.GamePad.0TurboA", DefaultGamePad[0][0]);
-	config->setOption("SDL.Input.GamePad.0TurboB", DefaultGamePad[0][8]);
+	config->setOption("SDL.Input.GamePad.0A", DefaultGamePad[0][0]);
+	config->setOption("SDL.Input.GamePad.0B", DefaultGamePad[0][1]);
+	config->setOption("SDL.Input.GamePad.0TurboA", DefaultGamePad[0][8]);
+	config->setOption("SDL.Input.GamePad.0TurboB", DefaultGamePad[0][9]);
 #if 0
 	// PowerPad 0 - 1
 	for(unsigned int i = 0; i < POWERPAD_NUM_DEVICES; i++) {

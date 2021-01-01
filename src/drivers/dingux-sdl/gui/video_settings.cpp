@@ -322,5 +322,6 @@ int RunVideoSettings()
 	dingoo_clear_video();
 
 	g_dirty = 1;
+	SDL_Delay(64);
 	return 0;
 }
