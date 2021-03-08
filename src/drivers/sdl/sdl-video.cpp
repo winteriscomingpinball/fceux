@@ -210,15 +210,20 @@ InitVideo(FCEUGI *gi)
 		}
 	}
 	s_inited = 1;
+	
+	puts{"Initialized video...");
 
 	// shows the cursor within the display window
-	SDL_ShowCursor(1);
+	SDL_ShowCursor(0);
+	puts{"show cursor 0...");
 
 	// determine if we can allocate the display on the video card
 	vinf = SDL_GetVideoInfo();
 	if(vinf->hw_available) {
 		flags |= SDL_HWSURFACE;
 	}
+	
+	puts{"got video info...");
     
 	// get the monitor's current resolution if we do not already have it
 	if(s_nativeWidth < 0) {
@@ -250,17 +255,17 @@ InitVideo(FCEUGI *gi)
 	flags |= SDL_HWPALETTE;
 
 	// enable double buffering if requested and we have hardware support
-#ifdef OPENGL
-	if(s_useOpenGL) {
-		FCEU_printf("Initializing with OpenGL (Disable with '--opengl 0').\n");
-		if(doublebuf) {
-			 SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-		}
-	} else
-#endif
-		if(doublebuf && (flags & SDL_HWSURFACE)) {
-			flags |= SDL_DOUBLEBUF;
-		}
+// #ifdef OPENGL
+	// if(s_useOpenGL) {
+		// FCEU_printf("Initializing with OpenGL (Disable with '--opengl 0').\n");
+		// if(doublebuf) {
+			 // SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+		// }
+	// } else
+// #endif
+		// if(doublebuf && (flags & SDL_HWSURFACE)) {
+			// flags |= SDL_DOUBLEBUF;
+		// }
 
 	if(s_fullscreen) {
 		int desbpp, autoscale;
@@ -331,7 +336,11 @@ InitVideo(FCEUGI *gi)
 									s_useOpenGL ? s_nativeHeight : yres,
 									desbpp, flags);
 #else
+	    puts{"Using this command to set video mode...");
 		s_screen = SDL_SetVideoMode(xres, yres, desbpp, flags);
+		printf{"xres: %d\n",xres);
+		printf{"yres: %d\n",yres);
+		printf{"bits per pixel: %d\n",desbpp);
 #endif
 
 		if(!s_screen) {
