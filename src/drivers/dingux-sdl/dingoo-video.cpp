@@ -346,7 +346,7 @@ void BlitScreen(uint8 *XBuf) {
 	if (screen->w != width || screen->h != height || forceRefresh)
 	{
 		if (screen) SDL_FreeSurface(screen);
-		screen = SDL_SetVideoMode(width, height, 32, SDL_HWSURFACE);
+		screen = SDL_SetVideoMode(width, height, 16, SDL_HWSURFACE);
 		forceRefresh = 0;
 		for(i=0;i<3;i++)
 		{
