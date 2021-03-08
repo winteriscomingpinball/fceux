@@ -78,7 +78,7 @@ typedef uint32_t uint32;
 
 #ifdef __GNUC__
  typedef unsigned long long uint64;
- typedef uint64 u64;
+ //typedef uint64 u64;
  typedef long long int64;
  #define INLINE inline
  #define GINLINE inline
