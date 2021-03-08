@@ -171,6 +171,7 @@ InitVideo(FCEUGI *gi)
 	int doublebuf, xstretch, ystretch, xres, yres, show_fps;
 
 	FCEUI_printf("Initializing video...");
+	puts{"Using this...");
 
 	// load the relevant configuration variables
 	g_config->getOption("SDL.Fullscreen", &s_fullscreen);
