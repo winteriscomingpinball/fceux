@@ -8,7 +8,7 @@
 #include "throttle.h"
 
 static const double Slowest = 0.015625; // 1/64x speed (around 1 fps on NTSC)
-static const double Fastest = 32;       // 32x speed   (around 1920 fps on NTSC)
+static const double Fastest = 16;       // 32x speed   (around 1920 fps on NTSC)
 static const double Normal  = 1.0;      // 1x speed    (around 60 fps on NTSC)
 
 uint64 Lasttime, Nexttime;
