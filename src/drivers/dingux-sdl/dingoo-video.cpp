@@ -175,7 +175,7 @@ int InitVideo(FCEUGI *gi) {
 	}
 	else
 	{
-		screen = SDL_SetVideoMode(256, 224 + (PAL*16), 32, SDL_HWSURFACE);
+		screen = SDL_SetVideoMode(256, 224 + (PAL*16), 16, SDL_HWSURFACE);
 	}
 
 	// a hack to bind inner buffer to nes_screen surface
