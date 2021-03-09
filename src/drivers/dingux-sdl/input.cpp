@@ -754,7 +754,7 @@ ButtConfig GamePadConfig[4][10] = {
 		{ MK(RSHIFT),  //A 
 		  MK(KP_MULTIPLY), //B
 		  MK(F1), //START
-		  MK(RETURN), //SELECT
+		  MK(F1), //SELECT
 		  MK(UP), 
 		  MK(DOWN), 
 		  MK(LEFT), 
