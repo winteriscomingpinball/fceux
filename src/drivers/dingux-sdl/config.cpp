@@ -158,8 +158,8 @@ Config * InitConfig() {
 	config->addOption("doublebuf", "SDL.DoubleBuffering", 0);
 	config->addOption("autoscale", "SDL.AutoScale", 1);
 	config->addOption("keepratio", "SDL.KeepRatio", 1);
-	config->addOption("xscale", "SDL.XScale", .9);
-	config->addOption("yscale", "SDL.YScale", .9);
+	config->addOption("xscale", "SDL.XScale", .5);
+	config->addOption("yscale", "SDL.YScale", .5);
 	config->addOption("xstretch", "SDL.XStretch", 0);
 	config->addOption("ystretch", "SDL.YStretch", 0);
 	config->addOption("noframe", "SDL.NoFrame", 0);
