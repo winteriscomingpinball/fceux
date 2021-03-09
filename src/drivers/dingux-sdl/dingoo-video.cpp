@@ -170,7 +170,7 @@ int InitVideo(FCEUGI *gi) {
 		//if (screen->w != 320)
 		//{
 			//screen = SDL_SetVideoMode(320, 240, 16, SDL_HWSURFACE | SDL_TRIPLEBUF);
-			screen = SDL_SetVideoMode(240, 180, 16, SDL_HWSURFACE);
+			screen = SDL_SetVideoMode(256, 224, 16, SDL_HWSURFACE);
 		//}
 	}
 	else
@@ -196,7 +196,7 @@ int InitVideo(FCEUGI *gi) {
 
 void InitGuiVideo() {
 	//if (screen->w == 320 && screen->h == 240) return;
-	screen = SDL_SetVideoMode(240, 180, 16, SDL_HWSURFACE);
+	screen = SDL_SetVideoMode(256, 224, 16, SDL_HWSURFACE);
 }
 
 
