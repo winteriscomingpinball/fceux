@@ -759,8 +759,8 @@ ButtConfig GamePadConfig[4][10] = {
 		  MK(DOWN), 
 		  MK(LEFT), 
 		  MK(RIGHT),
-				MK(F1), //START
-				MK(LSHIFT) }, //SELECT
+				MK(LSHIFT), //SELECT
+				MK(F1) }, //START
 
 		/* Gamepad 2 */
 		GPZ(),
