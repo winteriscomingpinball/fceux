@@ -44,6 +44,8 @@
 #include<gtk/gtk.h>
 #endif
 
+char menucheck=0;
+
 /** GLOBALS **/
 int NoWaiting = 1;
 extern Config *g_config;
@@ -675,12 +677,41 @@ static void UpdatePhysicalInput()
 	            // Keep a record of it.
 	            MenuRequested = true;
 			}
+			
+			switch(event.key.keysym.sym){
+				case(SDLK_DOWN):
+				case(SDLK_RSHIFT):
+				case(SDLK_KP_MULTIPLY):
+				case(SDLK_F1):
+					menucheck++;
+				default:
+				
+				break;
+				
+			}
+			
+			
             break;
+		case SDL_KEYUP:
+			switch(event.key.keysym.sym){
+				case(SDLK_DOWN):
+				case(SDLK_RSHIFT):
+				case(SDLK_KP_MULTIPLY):
+				case(SDLK_F1):
+					menucheck=0;
+				default:
+				
+				break;
+				
+			}
         default:
             // do nothing
             break;
         }
     }
+	if(menucheck==4){
+		MenuRequested = true;
+	}
     //SDL_PumpEvents();
 }
 
