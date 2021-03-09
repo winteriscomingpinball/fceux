@@ -751,16 +751,16 @@ static int DTestButton(ButtConfig *bc){
 
 ButtConfig GamePadConfig[4][10] = {
 		/* Gamepad 1 */
-		{ MK(B),  //TurboA 
+		{ MK(RSHIFT),  //TurboA 
 		  MK(KP_MULTIPLY), //A
-		  MK(C), //SELECT
+		  MK(A), //SELECT
 		  MK(F1), //START
 		  MK(UP), 
 		  MK(DOWN), 
 		  MK(LEFT), 
 		  MK(RIGHT),
 				MK(A), //TurboB 
-				MK(RSHIFT) }, //B
+				MK(LSHIFT) }, //B
 
 		/* Gamepad 2 */
 		GPZ(),
