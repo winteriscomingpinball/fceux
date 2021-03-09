@@ -1481,7 +1481,7 @@ const char *DefaultGamePadDevice[GAMEPAD_NUM_DEVICES] =
 
 const int DefaultGamePad[GAMEPAD_NUM_DEVICES][GAMEPAD_NUM_BUTTONS] =
 {
-	MK(RSHIFT),  //TurboA 
+	{MK(RSHIFT),  //TurboA 
 		  MK(KP_MULTIPLY), //A
 		  MK(A), //SELECT
 		  MK(F1), //START
