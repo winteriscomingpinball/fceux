@@ -1481,7 +1481,18 @@ const char *DefaultGamePadDevice[GAMEPAD_NUM_DEVICES] =
 
 const int DefaultGamePad[GAMEPAD_NUM_DEVICES][GAMEPAD_NUM_BUTTONS] =
 {
-	{  SDLK_LCTRL, SDLK_LALT, SDLK_ESCAPE, SDLK_RETURN, SDLK_UP, SDLK_DOWN, SDLK_LEFT, SDLK_RIGHT, SDLK_SPACE, SDLK_LSHIFT },
+	MK(RSHIFT),  //TurboA 
+		  MK(KP_MULTIPLY), //A
+		  MK(A), //SELECT
+		  MK(F1), //START
+		  MK(UP), 
+		  MK(DOWN), 
+		  MK(LEFT), 
+		  MK(RIGHT),
+				MK(A), //TurboB 
+				MK(RSHIFT) }, //B
+	
+	
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
