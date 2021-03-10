@@ -383,7 +383,7 @@ void BlitScreen(uint8 *XBuf) {
 			
 	puts("doing bitmap scale...");
 	bitmap_scale(0, 0, width, height, 240, 180, width, 0, (uint16_t*)nes_screen->pixels, (uint16_t*)downscale_screen->pixels);
-	SDL_BlitSurface(downscale_screen, &rct_src, screen, NULL);
+	SDL_BlitSurface(downscale_screen, NULL, screen, NULL);
 	
 	SDL_Flip(screen);
 }
