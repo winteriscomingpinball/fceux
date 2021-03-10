@@ -34,6 +34,7 @@
 #include "../common/vidblit.h"
 #include "../../fceu.h"
 #include "../../version.h"
+#include "../../utils/scaler/scaler.h"
 
 #include "dface.h"
 
@@ -361,7 +362,9 @@ void BlitScreen(uint8 *XBuf) {
 	rct_src.w = width;
 	rct_src.h = height;
 	
-	SDL_BlitSurface(nes_screen, &rct_src, screen, NULL);
+	//SDL_BlitSurface(nes_screen, &rct_src, screen, NULL);
+	
+	bitmap_scale(0, 0, width, height, 240, 180, width, 0, (uint16_t* restrict)nes_screen, (uint16_t* restrict)screen->pixels);	
 	SDL_Flip(screen);
 }
 
