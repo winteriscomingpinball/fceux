@@ -193,7 +193,7 @@ int InitVideo(FCEUGI *gi) {
 		printf("Error in SDL_CreateRGBSurfaceFrom\n");
 	SDL_SetPalette(nes_screen, SDL_LOGPAL, (SDL_Color *)s_cpsdl, 0, 256);
 	
-	downscale_screen = SDL_CreateRGBSurfaceFrom(0, 240, 180, 8, 0, 0, 0, 0);
+	downscale_screen = SDL_CreateRGBSurface(0, 240, 180, 8, 0, 0, 0, 0);
 	                  
 	if(!downscale_screen)
 		printf("Error in SDL_CreateRGBSurfaceFrom\n");
