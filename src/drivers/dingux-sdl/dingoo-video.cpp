@@ -184,13 +184,16 @@ int InitVideo(FCEUGI *gi) {
 
 	// a hack to bind inner buffer to nes_screen surface
 	extern uint8 *XBuf;
+	
+	uint8 *XBuf2;
 
-	nes_screen = SDL_CreateRGBSurfaceFrom(XBuf, 256, 224, 8, 256, 0, 0, 0, 0);
+	nes_screen = SDL_CreateRGBSurface(0, 256, 224, 8, 256, 0, 0, 0, 0);
+	             
 	if(!nes_screen)
 		printf("Error in SDL_CreateRGBSurfaceFrom\n");
 	SDL_SetPalette(nes_screen, SDL_LOGPAL, (SDL_Color *)s_cpsdl, 0, 256);
 	
-	downscale_screen = SDL_CreateRGBSurfaceFrom(XBuf, 240, 180, 8, 180, 0, 0, 0, 0);
+	downscale_screen = SDL_CreateRGBSurfaceFrom(XBuf2, 240, 180, 8, 180, 0, 0, 0, 0);
 	if(!downscale_screen)
 		printf("Error in SDL_CreateRGBSurfaceFrom\n");
 	SDL_SetPalette(downscale_screen, SDL_LOGPAL, (SDL_Color *)s_cpsdl, 0, 240);
