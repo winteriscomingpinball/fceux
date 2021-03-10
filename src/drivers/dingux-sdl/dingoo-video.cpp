@@ -34,7 +34,7 @@
 #include "../common/vidblit.h"
 #include "../../fceu.h"
 #include "../../version.h"
-#include "../../utils/scaler/scaler.h"
+#include "../../utils/scalers/scaler.h"
 
 #include "dface.h"
 
