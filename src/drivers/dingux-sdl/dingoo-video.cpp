@@ -367,8 +367,8 @@ void BlitScreen(uint8 *XBuf) {
 	//rct_src.x = clip_ppu;
 	rct_src.x =0;
 	rct_src.y = 0;
-	rct_src.w = 240;
-	rct_src.h = 180;
+	rct_src.w = width;
+	rct_src.h = height;
 	
 	//SDL_BlitSurface(nes_screen, &rct_src, screen, NULL);
 	
