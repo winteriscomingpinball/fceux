@@ -367,7 +367,7 @@ void BlitScreen(uint8 *XBuf) {
 	//bitmap_scale(0, 0, width, height, 240, 180, width, 0, (uint16_t*)nes_screen, (uint16_t*)screen->pixels);	
 	//bitmap_scale(0, 0, width, height, 240, 180, width, 0, (uint16_t*)nes_screen, (uint16_t*)screen->pixels);
 	//bitmap_scale(uint32_t startx, uint32_t starty, uint32_t viswidth, uint32_t visheight, uint32_t newwidth, uint32_t newheight,uint32_t pitchsrc,uint32_t pitchdest, uint16_t* restrict src, uint16_t* restrict dst)
-	bitmap_scale(0, 0, width, height, 240, 180, 16, 16, (uint16_t*)nes_screen, (uint16_t*)screen->pixels);
+	bitmap_scale(0, 0, width, height, 240, 180, 8, 16, (uint16_t*)nes_screen, (uint16_t*)screen->pixels);
 	
 	
 	SDL_Flip(screen);
