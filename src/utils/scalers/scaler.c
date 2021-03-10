@@ -14,7 +14,7 @@ void bitmap_scale(uint32_t startx, uint32_t starty, uint32_t viswidth, uint32_t 
 
     do 
     {
-        uint16_t* restrict buffer_mem=&src[(y>>16)*pitchsrc];
+        uint16_t* buffer_mem=&src[(y>>16)*pitchsrc];
         W=newwidth; x=startx<<16;
         do 
         {
