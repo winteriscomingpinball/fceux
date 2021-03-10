@@ -47,6 +47,7 @@
 // GLOBALS
 SDL_Surface *screen;
 SDL_Surface *nes_screen; // 256x224
+SDL_Surface *downscale_screen; // 240x180
 
 extern Config *g_config;
 
@@ -107,6 +108,8 @@ int KillVideo() {
 		return -1;
 
 	SDL_FreeSurface(nes_screen);
+	SDL_FreeSurface(downscale_screen);
+	
 	s_inited = 0;
 	s_VideoModeSet = false;
 	return 0;
@@ -171,12 +174,12 @@ int InitVideo(FCEUGI *gi) {
 		//if (screen->w != 320)
 		//{
 			//screen = SDL_SetVideoMode(320, 240, 16, SDL_HWSURFACE | SDL_TRIPLEBUF);
-			screen = SDL_SetVideoMode(256, 224, 8, SDL_HWSURFACE);
+			screen = SDL_SetVideoMode(256, 224, 16, SDL_HWSURFACE);
 		//}
 	}
 	else
 	{
-		screen = SDL_SetVideoMode(256, 224 + (PAL*16), 8, SDL_HWSURFACE);
+		screen = SDL_SetVideoMode(256, 224 + (PAL*16), 16, SDL_HWSURFACE);
 	}
 
 	// a hack to bind inner buffer to nes_screen surface
@@ -186,6 +189,11 @@ int InitVideo(FCEUGI *gi) {
 	if(!nes_screen)
 		printf("Error in SDL_CreateRGBSurfaceFrom\n");
 	SDL_SetPalette(nes_screen, SDL_LOGPAL, (SDL_Color *)s_cpsdl, 0, 256);
+	
+	downscale_screen = SDL_CreateRGBSurfaceFrom(XBuf, 240, 180, 8, 180, 0, 0, 0, 0);
+	if(!downscale_screen)
+		printf("Error in SDL_CreateRGBSurfaceFrom\n");
+	SDL_SetPalette(downscale_screen, SDL_LOGPAL, (SDL_Color *)s_cpsdl, 0, 240);
 
 	SDL_ShowCursor(0);
 
@@ -197,7 +205,7 @@ int InitVideo(FCEUGI *gi) {
 
 void InitGuiVideo() {
 	//if (screen->w == 320 && screen->h == 240) return;
-	screen = SDL_SetVideoMode(256, 224, 8, SDL_HWSURFACE);
+	screen = SDL_SetVideoMode(256, 224, 16, SDL_HWSURFACE);
 }
 
 
@@ -347,7 +355,7 @@ void BlitScreen(uint8 *XBuf) {
 	if (screen->w != width || screen->h != height || forceRefresh)
 	{
 		if (screen) SDL_FreeSurface(screen);
-		screen = SDL_SetVideoMode(width, height, 8, SDL_HWSURFACE);
+		screen = SDL_SetVideoMode(width, height, 16, SDL_HWSURFACE);
 		forceRefresh = 0;
 		for(i=0;i<3;i++)
 		{
@@ -359,8 +367,8 @@ void BlitScreen(uint8 *XBuf) {
 	//rct_src.x = clip_ppu;
 	rct_src.x =0;
 	rct_src.y = 0;
-	rct_src.w = width;
-	rct_src.h = height;
+	rct_src.w = 240;
+	rct_src.h = 180;
 	
 	//SDL_BlitSurface(nes_screen, &rct_src, screen, NULL);
 	
@@ -370,8 +378,8 @@ void BlitScreen(uint8 *XBuf) {
 	//bitmap_scale(0,0,internal_width,internal_height,keep_aspect_width,keep_aspect_height,internal_width, HOST_WIDTH_RESOLUTION - keep_aspect_width,(uint16_t* restrict)source_graph,(uint16_t* restrict)sdl_screen->pixels+(HOST_WIDTH_RESOLUTION-keep_aspect_width)/2+(HOST_HEIGHT_RESOLUTION-keep_aspect_height)/2*HOST_WIDTH_RESOLUTION);
 			
 	
-	bitmap_scale(0, 0, width, height, 240, 180, width, (320-240), (uint16_t*)nes_screen->pixels, (uint16_t*)screen->pixels);
-	
+	bitmap_scale(0, 0, width, height, 240, 180, width, (320-240), (uint16_t*)nes_screen->pixels, (uint16_t*)downscale_screen->pixels);
+	SDL_BlitSurface(downscale_screen, &rct_src, screen, NULL);
 	
 	SDL_Flip(screen);
 }
